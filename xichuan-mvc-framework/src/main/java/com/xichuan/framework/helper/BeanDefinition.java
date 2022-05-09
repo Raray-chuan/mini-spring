@@ -18,7 +18,7 @@ public class BeanDefinition {
     //Class
     private Class clazz;
     //Bean名词
-    private String BeanName;
+    private String beanName;
     //是否是Controller注解
     private  boolean isController=false;
     //作用域1、singleton 2、prototype
@@ -36,11 +36,11 @@ public class BeanDefinition {
     }
 
     public String getBeanName() {
-        return BeanName;
+        return beanName;
     }
 
     public void setBeanName(String beanName) {
-        BeanName = beanName;
+        this.beanName = beanName;
     }
 
     public String getScope() {

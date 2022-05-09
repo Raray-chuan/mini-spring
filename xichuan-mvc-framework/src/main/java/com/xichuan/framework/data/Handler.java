@@ -13,28 +13,28 @@ import java.lang.reflect.Method;
  */
 public class Handler {
     //Controller类
-    private Object Controller;
+    private Object controller;
     //该请求对应Controller的方法
-    private Method ControllerMethod;
+    private Method controllerMethod;
 
     public Handler(Object controller, Method controllerMethod) {
-        Controller = controller;
-        ControllerMethod = controllerMethod;
+        this.controller = controller;
+        this.controllerMethod = controllerMethod;
     }
 
     public Object getController() {
-        return Controller;
+        return controller;
     }
 
     public void setController(Object controller) {
-        Controller = controller;
+        this.controller = controller;
     }
 
     public Method getControllerMethod() {
-        return ControllerMethod;
+        return controllerMethod;
     }
 
     public void setControllerMethod(Method controllerMethod) {
-        ControllerMethod = controllerMethod;
+        this.controllerMethod = controllerMethod;
     }
 }

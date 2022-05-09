@@ -11,13 +11,13 @@ package com.xichuan.framework.data;
  */
 public class Request {
     //请求的uri
-    private String RequestPath;
+    private String requestPath;
     //请求的类型，GET、POST....
-    private String RequestMethod;
+    private String requestMethod;
 
     public Request(String requestPath, String requestMethod) {
-        RequestPath = requestPath;
-        RequestMethod = requestMethod;
+        this.requestPath = requestPath;
+        this.requestMethod = requestMethod;
     }
 
     @Override
@@ -26,29 +26,28 @@ public class Request {
         if (o == null || getClass() != o.getClass()) return false;
         Request request = (Request) o;
 
-        return RequestPath.equals(request.RequestPath) && RequestMethod.equals(request.RequestMethod);
+        return this.requestPath.equals(request.requestPath) && this.requestMethod.equals(request.requestMethod);
     }
 
     @Override
     public int hashCode() {
-        return RequestPath.hashCode()&RequestMethod.hashCode()&21;
+        return requestPath.hashCode()&requestMethod.hashCode()&21;
     }
-
 
 
     public String getRequestPath() {
-        return RequestPath;
+        return requestPath;
     }
 
     public void setRequestPath(String requestPath) {
-        RequestPath = requestPath;
+        this.requestPath = requestPath;
     }
 
     public String getRequestMethod() {
-        return RequestMethod;
+        return requestMethod;
     }
 
     public void setRequestMethod(String requestMethod) {
-        RequestMethod = requestMethod;
+        this.requestMethod = requestMethod;
     }
 }

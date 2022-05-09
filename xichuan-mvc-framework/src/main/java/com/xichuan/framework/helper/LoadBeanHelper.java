@@ -32,11 +32,11 @@ public class LoadBeanHelper {
     //将注册的bean的class封装成BeanDefinition放在此map种
     private static HashMap<String, BeanDefinition> beanDefinitionHashMap = new HashMap<>();
     //切面类中，后置通知方法Map(key:被切面类名词：value:Method(切面类的方法加了@Before; 如果被切面的是方法，被切面的方法名词))
-    private static HashMap<String, ArrayList<MethodNode>> BeforeDelegatedSet = new HashMap<>();
+    private static HashMap<String, ArrayList<MethodNode>> beforeDelegatedSet = new HashMap<>();
     //切面类中，前置通知方法Map(key:被切面类名词：value:Method(切面类的方法加了@After; 如果被切面的是方法，被切面的方法名词))
-    private static HashMap<String, ArrayList<MethodNode>> AfterDelegatedSet = new HashMap<>();
+    private static HashMap<String, ArrayList<MethodNode>> afterDelegatedSet = new HashMap<>();
     //PostProcessor后置处理器列表
-    private static ArrayList<BeanPostProcessor> BeanPostProcessorList=new ArrayList<>();
+    private static ArrayList<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();
     private static String splitOP= "\\";
 
     static {
@@ -49,7 +49,7 @@ public class LoadBeanHelper {
     /**
      * 将所有的BeanDefinition放入map中，（只有@Component、@Controller、@Service、@Repository才会放入）
      */
-    public static void LoadAllBean() {
+    public static void loadAllBean() {
         for (Class<?> clazz : classesHashSet) {
             if (!(clazz.isAnnotationPresent(Component.class)||
                     clazz.isAnnotationPresent(Controller.class)||
@@ -73,7 +73,7 @@ public class LoadBeanHelper {
             //isAssignableFrom()方法是判断是否为某个类的父
             if (BeanPostProcessor.class.isAssignableFrom(clazz)) {
                 try {
-                    BeanPostProcessorList.add((BeanPostProcessor) clazz.getDeclaredConstructor().newInstance());
+                    beanPostProcessorList.add((BeanPostProcessor) clazz.getDeclaredConstructor().newInstance());
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -194,14 +194,14 @@ public class LoadBeanHelper {
             methodNode.setMethodName(MethodName);
 
             if(method.isAnnotationPresent(Before.class)) {
-                if(!BeforeDelegatedSet.containsKey(key))
-                    BeforeDelegatedSet.put(key,new ArrayList<>());
-               BeforeDelegatedSet.get(key).add(methodNode);
+                if(!beforeDelegatedSet.containsKey(key))
+                    beforeDelegatedSet.put(key,new ArrayList<>());
+               beforeDelegatedSet.get(key).add(methodNode);
             }
             if(method.isAnnotationPresent(After.class)) {
-                if(!AfterDelegatedSet.containsKey(key))
-                    AfterDelegatedSet.put(key,new ArrayList<>());
-               AfterDelegatedSet.get(key).add(methodNode);
+                if(!afterDelegatedSet.containsKey(key))
+                    afterDelegatedSet.put(key,new ArrayList<>());
+               afterDelegatedSet.get(key).add(methodNode);
             }
         }
 
@@ -237,13 +237,13 @@ public class LoadBeanHelper {
     /**
      * 生产单例bean,将需要代理的bean进行代理，放到一级缓存中
      */
-    public static void ProductBean() {
+    public static void productBean() {
             for (String beanName : beanDefinitionHashMap.keySet()) {
                 BeanDefinition beanDefinition = beanDefinitionHashMap.get(beanName);
 //                如果是单例变成生产工厂
                 if (beanDefinition.getScope().equals(ScopeEnum.SingleTon.getName())) {
                     //创建单例bean
-                    CreateBean(beanDefinition,true);
+                    createBean(beanDefinition,true);
                 }
             }
     }
@@ -254,7 +254,7 @@ public class LoadBeanHelper {
      * @param singleton 是否是单例bean
      * @return
      */
-    private static Object CreateBean(BeanDefinition beanDefinition, Boolean singleton) {
+    private static Object createBean(BeanDefinition beanDefinition, Boolean singleton) {
         try {
             //如果在一级或者二级直接返回;如果是在三级缓存，则将三级缓存中的bean移到二级缓存中
             if(Container.singletonObjects.containsKey(beanDefinition.getBeanName())&&singleton)
@@ -282,13 +282,13 @@ public class LoadBeanHelper {
                 dynamicBeanFactory.setBeanDefinition(beanDefinition);
                 //查看是否存在切面并放入工厂中，在工厂中准备代理
                 //如果类使用了aop，需要进行动态代理处理
-                if(BeforeDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
+                if(beforeDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
                     dynamicBeanFactory.setDelegated(true);
-                    dynamicBeanFactory.setBeforeMethodCache(BeforeDelegatedSet.get(beanDefinition.getClazz().getName()));
+                    dynamicBeanFactory.setBeforeMethodCache(beforeDelegatedSet.get(beanDefinition.getClazz().getName()));
                 }
-                if(AfterDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
+                if(afterDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
                     dynamicBeanFactory.setDelegated(true);
-                    dynamicBeanFactory.setAfterMethodCache(AfterDelegatedSet.get(beanDefinition.getClazz().getName()));
+                    dynamicBeanFactory.setAfterMethodCache(afterDelegatedSet.get(beanDefinition.getClazz().getName()));
                 }
 
                 //扔到三级缓存
@@ -316,7 +316,7 @@ public class LoadBeanHelper {
                 }
 
                 //Spring容器中完成bean实例化、配置以及其他初始化方法前添加一些自己逻辑处理
-                for(BeanPostProcessor processor:BeanPostProcessorList) {
+                for(BeanPostProcessor processor:beanPostProcessorList) {
                     Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessBeforeInitialization(instance, beanDefinition.getBeanName()));
                 }
 
@@ -326,7 +326,7 @@ public class LoadBeanHelper {
                 }
 
                 //Spring容器中完成bean实例化、配置以及其他初始化方法后添加一些自己逻辑处理
-                for(BeanPostProcessor processor:BeanPostProcessorList) {
+                for(BeanPostProcessor processor:beanPostProcessorList) {
                     Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessAfterInitialization(instance, beanDefinition.getBeanName()));
                 }
             }
@@ -462,11 +462,11 @@ public class LoadBeanHelper {
             if (Container.singletonObjects.containsKey(beanName))
                 return Container.singletonObjects.get(beanName);
             else {
-                return CreateBean(beanDefinitionHashMap.get(beanName),true);
+                return createBean(beanDefinitionHashMap.get(beanName),true);
             }
         //如果不是单例，则创建bean,且不将此bean存放到一级缓存中
         }else {
-            return CreateBean(beanDefinitionHashMap.get(beanName),false);
+            return createBean(beanDefinitionHashMap.get(beanName),false);
         }
     }
 
@@ -481,7 +481,7 @@ public class LoadBeanHelper {
      * @param packagePath 扫描路径
      * @return 所有类的class对象
      */
-    public static Set<Class<?>> LoadAllClass(String packagePath) {
+    public static Set<Class<?>> loadAllClass(String packagePath) {
         URL resource=classLoader.getResource(packagePath.replace(".","/"));
         ArrayList<File> files=new ArrayList<>();
         DFSGetCurrentDir(new File(resource.getFile()),files);

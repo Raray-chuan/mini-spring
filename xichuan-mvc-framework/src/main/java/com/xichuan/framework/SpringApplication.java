@@ -14,10 +14,10 @@ import java.util.ResourceBundle;
  * @Date 2022/5/7 11:25
  * @Description
  */
-public class MySpringApplication {
+public class SpringApplication {
 
     static {
-        ClassLoader classLoader = MySpringApplication.class.getClassLoader();//拿到应用类加载器
+        ClassLoader classLoader = SpringApplication.class.getClassLoader();//拿到应用类加载器
         //给容器类赋值类加载器
         Container.classLoader=classLoader;
     }
@@ -26,17 +26,17 @@ public class MySpringApplication {
      * 通过@ComponentScan注解获取根路径，从而加载根路径下的所有class
      * @param config
      */
-    public MySpringApplication(Class config) {
+    public SpringApplication(Class config) {
         if(Container.singletonObjects.size()==0) {
             //获取根路径
             ComponentScan componentScanAnnotation = (ComponentScan) config.getAnnotation(ComponentScan.class);
             String path = componentScanAnnotation.value();
             //获取packagePath下的所有class，注册到classesHashSet
-            LoadBeanHelper.LoadAllClass(path);
+            LoadBeanHelper.loadAllClass(path);
             //将BeanDefinition、BeforeDelegatedSet、AfterDelegatedSet、BeanPostProcessorList进行注册
-            LoadBeanHelper.LoadAllBean();
+            LoadBeanHelper.loadAllBean();
             //生产bean,将需要代理的bean进行代理，放到一级缓存中
-            LoadBeanHelper.ProductBean();
+            LoadBeanHelper.productBean();
             //对controller拦截处理
             HandlerMapping.getAllHandler();
         }
@@ -45,16 +45,16 @@ public class MySpringApplication {
     /**
      * 通过config.properties配置文件，来加载根路径，从而加载根路径下的所有class
      */
-    public MySpringApplication() {
+    public SpringApplication() {
         if(Container.singletonObjects.size()==0) {
             //获取根路径
             ResourceBundle bundle = ResourceBundle.getBundle("config");
             //获取packagePath下的所有class，注册到classesHashSet
-            LoadBeanHelper.LoadAllClass(bundle.getString("componentScan"));
+            LoadBeanHelper.loadAllClass(bundle.getString("componentScan"));
             //将BeanDefinition、BeforeDelegatedSet、AfterDelegatedSet、BeanPostProcessorList进行注册
-            LoadBeanHelper.LoadAllBean();
+            LoadBeanHelper.loadAllBean();
             //生产单例bean,将需要代理的bean进行代理，放到一级缓存中
-            LoadBeanHelper.ProductBean();
+            LoadBeanHelper.productBean();
             //对controller拦截处理
             HandlerMapping.getAllHandler();
         }

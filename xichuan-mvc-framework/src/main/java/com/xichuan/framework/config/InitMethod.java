@@ -24,9 +24,9 @@ public class InitMethod {
             return;
         ResourceBundle bundle = ResourceBundle.getBundle("config");
         String s=bundle.getString("componentScan");
-        LoadBeanHelper.LoadAllClass(bundle.getString("componentScan"));
-        LoadBeanHelper.LoadAllBean();
-        LoadBeanHelper.ProductBean();
+        LoadBeanHelper.loadAllClass(bundle.getString("componentScan"));
+        LoadBeanHelper.loadAllBean();
+        LoadBeanHelper.productBean();
         HandlerMapping.getAllHandler();
         isLoaded=true;
     }

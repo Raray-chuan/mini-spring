@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @Description
  */
 public class HandlerMapping {
-    private static HashMap<Request, Handler>HandlerMap =new HashMap<>();
+    private static HashMap<Request, Handler> handlerMap =new HashMap<>();
 
     /**
      * 获取所有Controller的handler，并放在HandlerMap中
@@ -35,7 +35,7 @@ public class HandlerMapping {
                 //将handler封装成对象
                 Handler handler=new Handler(controllerInstance,method);
 
-                HandlerMap.put(request,handler);
+                handlerMap.put(request,handler);
             }
 
 
@@ -49,8 +49,8 @@ public class HandlerMapping {
      * @return
      */
     public static Handler getHandler(Request request) {
-        if(HandlerMap.containsKey(request))
-            return HandlerMap.get(request);
+        if(handlerMap.containsKey(request))
+            return handlerMap.get(request);
         else
           return null;
     }
