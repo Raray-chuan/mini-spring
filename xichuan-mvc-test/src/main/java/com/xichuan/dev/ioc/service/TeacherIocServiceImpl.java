@@ -10,11 +10,11 @@ import java.util.List;
  * @Date 2022/5/10 9:55
  * @Description
  */
-@Service
+@Service("teacherService")
 public class TeacherIocServiceImpl implements TeacherIocService {
 
     @Autowired("studentService")
-    StudentIocService student;
+    StudentIocServiceImpl student;
 
     @Override
     public void teach(String subject, List<String> students) {

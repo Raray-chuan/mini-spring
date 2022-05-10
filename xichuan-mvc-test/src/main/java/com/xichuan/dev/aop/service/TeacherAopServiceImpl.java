@@ -14,7 +14,7 @@ import java.util.List;
 public class TeacherAopServiceImpl implements TeacherAopService {
 
     @Autowired
-    StudentAopService student;
+    StudentAopServiceImpl student;
 
     @Override
     public void teach(String subject, List<String> students) {

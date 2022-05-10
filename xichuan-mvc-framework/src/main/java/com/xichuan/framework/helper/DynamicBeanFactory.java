@@ -3,7 +3,8 @@ package com.xichuan.framework.helper;
 
 import com.xichuan.framework.data.BeanDefinition;
 import com.xichuan.framework.data.MethodNode;
-import com.xichuan.framework.proxyUtils.BeanProxyUtil;
+import com.xichuan.framework.proxyUtils.BeanCGlibProxyUtil;
+import com.xichuan.framework.proxyUtils.BeanJDKProxyUtil;
 
 import java.util.ArrayList;
 
@@ -19,29 +20,60 @@ import java.util.ArrayList;
 public class DynamicBeanFactory {
     //Bean定义信息
     private BeanDefinition beanDefinition;
-    //Bean实例化对象
+    //Bean实例化对象(原始对象)
     private Object instance;
+    //代理对象
+    private Object proxyInstance;
     //是否动态代理
     private Boolean isDelegated=false;
     //
     private ArrayList<MethodNode> beforeMethodCache;
     private ArrayList<MethodNode> afterMethodCache;
 
+    //是否使用cglib
+    private boolean isCGlib = true;
+
     /**
      * 此方法用于返回是不是动态代理对象
      * @return
      */
     public Object getTarget() {
-        if (isDelegated) {
+        if (isDelegated && proxyInstance == null) {
             //创建代理工具类
-            BeanProxyUtil beanProxyUtil = new BeanProxyUtil();
-            beanProxyUtil.setAfterMethodCache(getAfterMethodCache());
-            beanProxyUtil.setBeforeMethodCache(getBeforeMethodCache());
-            return beanProxyUtil.creatCarProxy(instance);
+            if(isCGlib){
+                BeanCGlibProxyUtil beanCGlibProxyUtil = new BeanCGlibProxyUtil();
+                beanCGlibProxyUtil.setAfterMethodCache(getAfterMethodCache());
+                beanCGlibProxyUtil.setBeforeMethodCache(getBeforeMethodCache());
+                proxyInstance = beanCGlibProxyUtil.creatCarProxy(instance);
+            }else{
+                BeanJDKProxyUtil beanJDKProxyUtil = new BeanJDKProxyUtil();
+                beanJDKProxyUtil.setAfterMethodCache(getAfterMethodCache());
+                beanJDKProxyUtil.setBeforeMethodCache(getBeforeMethodCache());
+                proxyInstance = beanJDKProxyUtil.creatCarProxy(instance);
+            }
+            return proxyInstance;
+        }else if(isDelegated && proxyInstance != null){
+            return proxyInstance;
         } else {  //不代理的话直接返回
             return instance;
 
         }
+    }
+
+    public boolean isCGlib() {
+        return isCGlib;
+    }
+
+    public void setCGlib(boolean CGlib) {
+        isCGlib = CGlib;
+    }
+
+    public Object getProxyInstance() {
+        return proxyInstance;
+    }
+
+    public void setProxyInstance(Object proxyInstance) {
+        this.proxyInstance = proxyInstance;
     }
 
     public Boolean getDelegated() {

@@ -281,15 +281,20 @@ public class LoadBeanHelper {
                 DynamicBeanFactory dynamicBeanFactory = new DynamicBeanFactory();
                 dynamicBeanFactory.setInstance(instance);
                 dynamicBeanFactory.setBeanDefinition(beanDefinition);
+
                 //查看是否存在切面并放入工厂中，在工厂中准备代理
                 //如果类使用了aop，需要进行动态代理处理
                 if(beforeDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
                     dynamicBeanFactory.setDelegated(true);
                     dynamicBeanFactory.setBeforeMethodCache(beforeDelegatedSet.get(beanDefinition.getClazz().getName()));
+                    //创建代理对象
+                    dynamicBeanFactory.getTarget();
                 }
                 if(afterDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
                     dynamicBeanFactory.setDelegated(true);
                     dynamicBeanFactory.setAfterMethodCache(afterDelegatedSet.get(beanDefinition.getClazz().getName()));
+                    //创建代理对象
+                    dynamicBeanFactory.getTarget();
                 }
 
                 //扔到三级缓存
@@ -365,9 +370,9 @@ public class LoadBeanHelper {
             //获取bean对象
             Class<?> bean=null;
             if(Container.singletonFactory.containsKey(beanName))
-                bean=Container.singletonFactory.get(beanName).getInstance().getClass();
+                bean = Container.singletonFactory.get(beanName).getInstance().getClass();
             else if(Container.earlySingletonObjects.containsKey(beanName))
-                bean=Container.earlySingletonObjects.get(beanName).getClass();
+                bean = Container.earlySingletonObjects.get(beanName).getClass();
 
 
             //遍历bean的方法
@@ -404,8 +409,14 @@ public class LoadBeanHelper {
                 //重新设置该方法属性值（即：对接口注入子类对象）
                 //declaredField.set(bean,methodBean);
                 if(Container.singletonFactory.containsKey(beanName)) {
-                    //Field.set(该Field所属的类对象，该对象的新值)
-                    declaredField.set(Container.singletonFactory.get(beanName).getInstance(), methodBean);
+
+                    //如果是CGlib设置代理对象属性，如果是jdk Proxy设置原始对象的属性；否则报错
+                    if (Container.singletonFactory.get(beanName).isCGlib()){
+                        //Field.set(该Field所属的类对象，该对象的新值)
+                        declaredField.set(Container.singletonFactory.get(beanName).getTarget(), methodBean);
+                    }else{
+                        declaredField.set(Container.singletonFactory.get(beanName).getInstance(), methodBean);
+                    }
                 } else if(Container.earlySingletonObjects.containsKey(beanName))
                     declaredField.set(Container.earlySingletonObjects.get(beanName),methodBean);
             }

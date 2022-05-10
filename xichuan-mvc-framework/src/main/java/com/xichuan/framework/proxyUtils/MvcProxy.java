@@ -32,7 +32,6 @@ public class MvcProxy {
                 Object[] par = new Object[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
                     par[i] = paramMap.get(parameters[i].getName());
-                    //String a=parameters[i].getName();
                 }
                 res = method.invoke(target, par);
             }else

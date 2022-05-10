@@ -12,7 +12,7 @@ import com.xichuan.framework.interfaces.BeanPostProcessor;
 /**
  * 如果要测试BeanPostProcessor，可以将@Component注解打开
  */
-@Component
+//@Component
 public class ProcessorConfig implements BeanPostProcessor {
 
     @Override

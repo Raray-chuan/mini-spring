@@ -18,7 +18,7 @@ public class TestIOC {
         SpringApplication app = new SpringApplication(ScanConfig.class);
         //通过config.properties获取根路径
         //SpringApplication app = new SpringApplication();
-        TeacherIocService teacher = app.getBean(TeacherIocServiceImpl.class);
+        TeacherIocService teacher = (TeacherIocService)app.getBean("teacherService");
         teacher.teach("语文", Arrays.asList("zhangsan,lisi,wangwu,liuliu".split(",")));
 
 
