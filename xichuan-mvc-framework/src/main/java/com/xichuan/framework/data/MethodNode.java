@@ -1,4 +1,4 @@
-package com.xichuan.framework.helper;
+package com.xichuan.framework.data;
 
 import java.lang.reflect.Method;
 

@@ -1,7 +1,7 @@
 package com.xichuan.framework;
 
 
-import com.xichuan.framework.config.InitMethod;
+import com.xichuan.framework.helper.InitMethod;
 import com.xichuan.framework.data.Handler;
 import com.xichuan.framework.data.Request;
 import com.xichuan.framework.data.RequestParam;

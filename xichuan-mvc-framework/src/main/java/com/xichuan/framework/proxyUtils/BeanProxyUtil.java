@@ -3,7 +3,7 @@ package com.xichuan.framework.proxyUtils;
 
 
 import com.xichuan.framework.helper.Container;
-import com.xichuan.framework.helper.MethodNode;
+import com.xichuan.framework.data.MethodNode;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

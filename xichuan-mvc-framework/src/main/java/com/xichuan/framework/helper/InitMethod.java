@@ -1,9 +1,7 @@
-package com.xichuan.framework.config;
+package com.xichuan.framework.helper;
 
 
 
-import com.xichuan.framework.helper.HandlerMapping;
-import com.xichuan.framework.helper.LoadBeanHelper;
 
 import java.util.ResourceBundle;
 

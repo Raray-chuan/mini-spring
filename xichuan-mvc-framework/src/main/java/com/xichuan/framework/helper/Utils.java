@@ -1,4 +1,4 @@
-package com.xichuan.framework.helper.system;
+package com.xichuan.framework.helper;
 
 import java.util.Collection;
 import java.util.Properties;

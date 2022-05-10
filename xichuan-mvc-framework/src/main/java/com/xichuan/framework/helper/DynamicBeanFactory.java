@@ -1,6 +1,8 @@
 package com.xichuan.framework.helper;
 
 
+import com.xichuan.framework.data.BeanDefinition;
+import com.xichuan.framework.data.MethodNode;
 import com.xichuan.framework.proxyUtils.BeanProxyUtil;
 
 import java.util.ArrayList;

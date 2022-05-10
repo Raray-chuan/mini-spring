@@ -2,8 +2,9 @@ package com.xichuan.framework.helper;
 
 
 import com.xichuan.framework.annotation.*;
+import com.xichuan.framework.data.BeanDefinition;
+import com.xichuan.framework.data.MethodNode;
 import com.xichuan.framework.enums.ScopeEnum;
-import com.xichuan.framework.helper.system.Utils;
 import com.xichuan.framework.interfaces.BeanNameAware;
 import com.xichuan.framework.interfaces.BeanPostProcessor;
 import com.xichuan.framework.interfaces.InitializingBean;
@@ -343,15 +344,14 @@ public class LoadBeanHelper {
             e.printStackTrace();
         }
 
+        Object rs = Container.singletonObjects.get(beanDefinition.getBeanName());
         //如果不是单例，要将上面处理的一级缓存中的单例bean清除，并返回bean对象
         if(!singleton) {
-            Object obj=Container.singletonObjects.get(beanDefinition.getBeanName());
             //不是单例删除
             Container.singletonObjects.remove(beanDefinition.getBeanName());
-            return obj;
+            return rs;
         }
-
-        return null;
+        return rs;
     }
 
 
@@ -402,6 +402,7 @@ public class LoadBeanHelper {
                 declaredField.setAccessible(true);
 
                 //重新设置该方法属性值（即：对接口注入子类对象）
+                //declaredField.set(bean,methodBean);
                 if(Container.singletonFactory.containsKey(beanName)) {
                     //Field.set(该Field所属的类对象，该对象的新值)
                     declaredField.set(Container.singletonFactory.get(beanName).getInstance(), methodBean);
@@ -411,10 +412,10 @@ public class LoadBeanHelper {
 
             //返回此类的bean
             if(Container.singletonFactory.containsKey(beanName)) {
-                Object res=Container.singletonFactory.get(beanName).getTarget();
+                Object res = Container.singletonFactory.get(beanName).getTarget();
                 return res;
             } else if(Container.earlySingletonObjects.containsKey(beanName)) {
-                Object res=Container.earlySingletonObjects.get(beanName);
+                Object res = Container.earlySingletonObjects.get(beanName);
                 return  res;
             }
         } catch (Exception e) {
@@ -459,8 +460,9 @@ public class LoadBeanHelper {
     public static Object getBean(String beanName) {
         //如果是单例，则从一级缓存中获取，如果获取不到，则创建bean并存放到一级缓存中
         if(beanDefinitionHashMap.get(beanName).getScope().equals(ScopeEnum.SingleTon.getName())) {
-            if (Container.singletonObjects.containsKey(beanName))
+            if (Container.singletonObjects.containsKey(beanName)) {
                 return Container.singletonObjects.get(beanName);
+            }
             else {
                 return createBean(beanDefinitionHashMap.get(beanName),true);
             }
