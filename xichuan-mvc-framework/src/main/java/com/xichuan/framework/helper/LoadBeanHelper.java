@@ -312,23 +312,23 @@ public class LoadBeanHelper {
                     Container.controllerMap.put(beanDefinition.getBeanName(),Container.singletonObjects.get(beanDefinition.getBeanName()));
 
                 //处理BeanNameAware的setBeanName
-                if(instance instanceof BeanNameAware) {
-                    ((BeanNameAware)instance).setBeanName(beanDefinition.getBeanName());
+                if(targetBean instanceof BeanNameAware) {
+                    ((BeanNameAware)targetBean).setBeanName(beanDefinition.getBeanName());
                 }
 
                 //Spring容器中完成bean实例化、配置以及其他初始化方法前添加一些自己逻辑处理
                 for(BeanPostProcessor processor:beanPostProcessorList) {
-                    Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessBeforeInitialization(instance, beanDefinition.getBeanName()));
+                    Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessBeforeInitialization(targetBean, beanDefinition.getBeanName()));
                 }
 
                 //InitializingBean接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候会执行该方法。
-                if(instance instanceof InitializingBean) {
-                   ((InitializingBean) instance).afterPropertiesSet();
+                if(targetBean instanceof InitializingBean) {
+                   ((InitializingBean) targetBean).afterPropertiesSet();
                 }
 
                 //Spring容器中完成bean实例化、配置以及其他初始化方法后添加一些自己逻辑处理
                 for(BeanPostProcessor processor:beanPostProcessorList) {
-                    Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessAfterInitialization(instance, beanDefinition.getBeanName()));
+                    Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessAfterInitialization(targetBean, beanDefinition.getBeanName()));
                 }
             }
 
