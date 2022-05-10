@@ -13,6 +13,10 @@ import java.util.List;
 @Service
 public class TeacherAopServiceImpl implements TeacherAopService {
 
+    public TeacherAopServiceImpl(){
+        System.out.println("init TeacherAopServiceImpl.....");
+    }
+
     @Autowired
     StudentAopServiceImpl student;
 

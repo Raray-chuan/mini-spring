@@ -27,14 +27,14 @@ public class BeanCGlibProxyUtil {
     private ArrayList<MethodNode> afterMethodCache;
 
     /**
-     * 初始化代理对象
-     * @param target
+     * 初始化代理对象class
+     * @param targetClass
      * @return
      */
-    public Object creatCarProxy(Object target) {
+    public Object creatCarProxy(Class targetClass) {
         this.target=target;
         try {
-            Object proxy = this.createProxy(target.getClass());
+            Object proxy = this.createProxy(targetClass);
             return proxy;
         }catch (Exception e) {
             e.printStackTrace();

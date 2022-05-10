@@ -10,6 +10,10 @@ import com.xichuan.framework.annotation.Service;
 @Service
 public class StudentAopServiceImpl implements StudentAopService {
 
+    public StudentAopServiceImpl(){
+        System.out.println("init StudentAopServiceImpl.....");
+    }
+
     @Override
     public void study(String studentName) {
         System.out.println(studentName + " is start study!");

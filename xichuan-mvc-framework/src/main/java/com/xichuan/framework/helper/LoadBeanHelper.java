@@ -8,6 +8,7 @@ import com.xichuan.framework.enums.ScopeEnum;
 import com.xichuan.framework.interfaces.BeanNameAware;
 import com.xichuan.framework.interfaces.BeanPostProcessor;
 import com.xichuan.framework.interfaces.InitializingBean;
+import com.xichuan.framework.proxyUtils.DynamicBeanFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -274,25 +275,29 @@ public class LoadBeanHelper {
                 if(beanDefinition.getClazz().isInterface())
                    return null;
 
-                //创建bean对象
-                Object instance = beanDefinition.getClazz().getDeclaredConstructor().newInstance();
-
                 //将bean对象放到动态代理工厂中
                 DynamicBeanFactory dynamicBeanFactory = new DynamicBeanFactory();
-                dynamicBeanFactory.setInstance(instance);
                 dynamicBeanFactory.setBeanDefinition(beanDefinition);
+                dynamicBeanFactory.setClazz(beanDefinition.getClazz());
 
                 //查看是否存在切面并放入工厂中，在工厂中准备代理
                 //如果类使用了aop，需要进行动态代理处理
                 if(beforeDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
                     dynamicBeanFactory.setDelegated(true);
                     dynamicBeanFactory.setBeforeMethodCache(beforeDelegatedSet.get(beanDefinition.getClazz().getName()));
-                    //创建代理对象
-                    dynamicBeanFactory.getTarget();
                 }
                 if(afterDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
                     dynamicBeanFactory.setDelegated(true);
                     dynamicBeanFactory.setAfterMethodCache(afterDelegatedSet.get(beanDefinition.getClazz().getName()));
+                }
+
+                //创建bean对象(如果是不是CGlib代理就需要创建)
+                if (!dynamicBeanFactory.getDelegated() || !dynamicBeanFactory.isCGlib()){
+                    Object instance = beanDefinition.getClazz().getDeclaredConstructor().newInstance();
+                    dynamicBeanFactory.setInstance(instance);
+                }
+
+                if (beforeDelegatedSet.containsKey(beanDefinition.getClazz().getName()) || afterDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
                     //创建代理对象
                     dynamicBeanFactory.getTarget();
                 }
@@ -370,7 +375,7 @@ public class LoadBeanHelper {
             //获取bean对象
             Class<?> bean=null;
             if(Container.singletonFactory.containsKey(beanName))
-                bean = Container.singletonFactory.get(beanName).getInstance().getClass();
+                bean = Container.singletonFactory.get(beanName).getClazz();
             else if(Container.earlySingletonObjects.containsKey(beanName))
                 bean = Container.earlySingletonObjects.get(beanName).getClass();
 

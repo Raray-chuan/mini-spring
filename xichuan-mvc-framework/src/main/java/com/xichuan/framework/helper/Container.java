@@ -1,5 +1,7 @@
 package com.xichuan.framework.helper;
 
+import com.xichuan.framework.proxyUtils.DynamicBeanFactory;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,7 +19,7 @@ public class Container {
     //二级，还没进行属性注入，由三级缓存放进来
     public static ConcurrentHashMap<String,Object> earlySingletonObjects=new ConcurrentHashMap<>();
     //三级，Value是一个动态代理对象工厂
-    public static ConcurrentHashMap<String,DynamicBeanFactory> singletonFactory=new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, DynamicBeanFactory> singletonFactory=new ConcurrentHashMap<>();
     //Controller对象容器
     public static ConcurrentHashMap<String,Object> controllerMap=new ConcurrentHashMap<>();
     //类加载器,在SpringApplication的静态代码块中进行赋值的

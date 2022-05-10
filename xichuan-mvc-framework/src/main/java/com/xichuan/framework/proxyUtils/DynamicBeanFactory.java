@@ -1,4 +1,4 @@
-package com.xichuan.framework.helper;
+package com.xichuan.framework.proxyUtils;
 
 
 import com.xichuan.framework.data.BeanDefinition;
@@ -20,6 +20,8 @@ import java.util.ArrayList;
 public class DynamicBeanFactory {
     //Bean定义信息
     private BeanDefinition beanDefinition;
+    //被代理对象的class
+    private Class clazz;
     //Bean实例化对象(原始对象)
     private Object instance;
     //代理对象
@@ -44,7 +46,7 @@ public class DynamicBeanFactory {
                 BeanCGlibProxyUtil beanCGlibProxyUtil = new BeanCGlibProxyUtil();
                 beanCGlibProxyUtil.setAfterMethodCache(getAfterMethodCache());
                 beanCGlibProxyUtil.setBeforeMethodCache(getBeforeMethodCache());
-                proxyInstance = beanCGlibProxyUtil.creatCarProxy(instance);
+                proxyInstance = beanCGlibProxyUtil.creatCarProxy(clazz);
             }else{
                 BeanJDKProxyUtil beanJDKProxyUtil = new BeanJDKProxyUtil();
                 beanJDKProxyUtil.setAfterMethodCache(getAfterMethodCache());
@@ -58,6 +60,14 @@ public class DynamicBeanFactory {
             return instance;
 
         }
+    }
+
+    public Class getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(Class clazz) {
+        this.clazz = clazz;
     }
 
     public boolean isCGlib() {
