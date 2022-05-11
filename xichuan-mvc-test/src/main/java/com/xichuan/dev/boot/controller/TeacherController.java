@@ -18,11 +18,14 @@ public class TeacherController {
     @Autowired
     TeacherBootService teacher;
 
-    @RequestMapping(value = "/teach",method = RequestMethod.GET)
+    @RequestMapping(value = "xichuan/teach",method = RequestMethod.GET)
     public String teach() {
         return "名字是";
     }
-
+    @RequestMapping(value = "xichuan",method = RequestMethod.GET)
+    public String teach2() {
+        return "ddddddddddddddd";
+    }
 
     @RequestMapping(value = "second",method = RequestMethod.GET)//second?name="xxx"
     public View secondeHandler(String parm)

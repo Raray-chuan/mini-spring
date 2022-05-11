@@ -25,11 +25,29 @@ public class SpringContext {
      * 通过@ComponentScan注解获取根路径，从而加载根路径下的所有class
      * @param config
      */
-    public SpringContext(Class config) {
+    public SpringContext(Class<?> config) {
         if(Container.singletonObjects.size()==0) {
             //获取根路径
             ComponentScan componentScanAnnotation = (ComponentScan) config.getAnnotation(ComponentScan.class);
             String path = componentScanAnnotation.value();
+            //获取packagePath下的所有class，注册到classesHashSet
+            LoadBeanHelper.loadAllClass(path);
+            //将BeanDefinition、BeforeDelegatedSet、AfterDelegatedSet、BeanPostProcessorList进行注册
+            LoadBeanHelper.loadAllBeanDefinition();
+            //生产bean,将需要代理的bean进行代理，放到一级缓存中
+            LoadBeanHelper.productBean();
+        }
+    }
+
+    /**
+     * 根据bean的包路径作为根路径
+     * @param mainClass
+     * @param NUll 无意义字段
+     */
+    public SpringContext(Class<?> mainClass,String NUll){
+        if(Container.singletonObjects.size()==0) {
+            //获取根路径
+            String path = mainClass.getPackage().getName();
             //获取packagePath下的所有class，注册到classesHashSet
             LoadBeanHelper.loadAllClass(path);
             //将BeanDefinition、BeforeDelegatedSet、AfterDelegatedSet、BeanPostProcessorList进行注册

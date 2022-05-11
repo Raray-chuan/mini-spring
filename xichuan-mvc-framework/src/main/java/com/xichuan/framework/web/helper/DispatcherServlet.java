@@ -1,13 +1,11 @@
-package com.xichuan.framework.web;
+package com.xichuan.framework.web.helper;
 
 
-import com.xichuan.framework.web.helper.InitMethod;
 import com.xichuan.framework.web.data.RequestHandler;
 import com.xichuan.framework.web.data.Request;
 import com.xichuan.framework.web.data.RequestParam;
 import com.xichuan.framework.web.data.View;
 import com.xichuan.framework.web.helper.HandlerAdapter;
-import com.xichuan.framework.core.Container;
 import com.xichuan.framework.web.helper.HandlerMapping;
 import com.xichuan.framework.web.helper.ViewResolver;
 
@@ -28,17 +26,11 @@ import java.io.IOException;
 /**
  * 每一个http请求进行拦截一次
  */
-@WebServlet(urlPatterns = "/*",loadOnStartup = 0)
+//@WebServlet(urlPatterns = "/*",loadOnStartup = 0)
 public class DispatcherServlet extends HttpServlet {
-    //包的基础路径
-    private String basePackage;
 
     public DispatcherServlet(){}
 
-    public DispatcherServlet(String basePackage){
-        this.basePackage = basePackage;
-        init(null);
-    }
 
     /**
      * 初始化方法
@@ -47,8 +39,7 @@ public class DispatcherServlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig config) {
-        Container.classLoader = this.getClass().getClassLoader();
-        InitMethod.init(basePackage);
+
     }
 
     /**

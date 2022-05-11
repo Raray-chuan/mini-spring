@@ -22,7 +22,6 @@ public class HandlerAdapter {
      * @return
      */
         public static Object adapterForRequest(RequestParam requestParam, RequestHandler requestHandler) {
-            Object result=null;
             if(requestParam.getParamMap().size()>0) {
                 return MvcProxy.invokeMethod(requestHandler.getController(), requestHandler.getControllerMethod(),requestParam.getParamMap());
             }else {
