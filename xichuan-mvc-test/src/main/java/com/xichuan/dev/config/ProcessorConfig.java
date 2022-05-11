@@ -1,7 +1,6 @@
 package com.xichuan.dev.config;
 
-import com.xichuan.framework.annotation.Component;
-import com.xichuan.framework.interfaces.BeanPostProcessor;
+import com.xichuan.framework.core.interfaces.BeanPostProcessor;
 
 /**
  * @Author Xichuan

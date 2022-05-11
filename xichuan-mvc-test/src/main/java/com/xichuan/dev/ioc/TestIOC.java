@@ -2,8 +2,7 @@ package com.xichuan.dev.ioc;
 
 import com.xichuan.dev.config.ScanConfig;
 import com.xichuan.dev.ioc.service.TeacherIocService;
-import com.xichuan.dev.ioc.service.TeacherIocServiceImpl;
-import com.xichuan.framework.SpringApplication;
+import com.xichuan.framework.core.SpringContext;
 
 import java.util.Arrays;
 
@@ -15,7 +14,7 @@ import java.util.Arrays;
 public class TestIOC {
     public static void main(String[] args) {
         //通过@ComponentScan获取根路径
-        SpringApplication app = new SpringApplication(ScanConfig.class);
+        SpringContext app = new SpringContext(ScanConfig.class);
         //通过config.properties获取根路径
         //SpringApplication app = new SpringApplication();
         TeacherIocService teacher = (TeacherIocService)app.getBean("teacherService");

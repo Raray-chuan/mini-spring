@@ -1,7 +1,7 @@
 package com.xichuan.dev.ioc.service;
 
-import com.xichuan.framework.annotation.Autowired;
-import com.xichuan.framework.annotation.Service;
+import com.xichuan.framework.core.annotation.Autowired;
+import com.xichuan.framework.core.annotation.Service;
 
 import java.util.List;
 

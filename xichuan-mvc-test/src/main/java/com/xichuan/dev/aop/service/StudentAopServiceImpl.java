@@ -1,6 +1,6 @@
 package com.xichuan.dev.aop.service;
 
-import com.xichuan.framework.annotation.Service;
+import com.xichuan.framework.core.annotation.Service;
 
 /**
  * @Author Xichuan

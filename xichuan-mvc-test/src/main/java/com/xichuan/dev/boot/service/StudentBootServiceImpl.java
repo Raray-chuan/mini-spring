@@ -1,15 +1,14 @@
-package com.xichuan.dev.ioc.service;
+package com.xichuan.dev.boot.service;
 
 import com.xichuan.framework.core.annotation.Service;
 
 /**
  * @Author Xichuan
- * @Date 2022/5/10 9:43
+ * @Date 2022/5/11 9:49
  * @Description
  */
-@Service("studentService")
-public class StudentIocServiceImpl implements StudentIocService {
-
+@Service("bootStudentService")
+public class StudentBootServiceImpl implements StudentBootService{
     @Override
     public void study(String studentName) {
         System.out.println(studentName + " is start study!");

@@ -1,6 +1,6 @@
 package com.xichuan.dev.config;
 
-import com.xichuan.framework.annotation.ComponentScan;
+import com.xichuan.framework.core.annotation.ComponentScan;
 
 /**
  * @Author Xichuan
