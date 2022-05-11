@@ -6,11 +6,13 @@ import com.xichuan.framework.core.helper.ConfigHelper;
 import com.xichuan.framework.web.data.View;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @Author Xichuan
@@ -22,6 +24,31 @@ import java.util.Map;
  * View处理类
  */
 public class ViewResolver {
+
+    /**
+     * 处理404
+     * @param response
+     */
+    public static void handle404( HttpServletResponse response) throws IOException {
+
+        final ServletOutputStream out = response.getOutputStream();
+        response.setContentType("text/html");
+        response.setStatus(404);
+        String html =
+                "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "    <head>\n" +
+                "        <meta charset=\"UTF-8\">\n" +
+                "        <title>404</title>\n" +
+                "    </head>\n" +
+                "    <body>\n" +
+                "        <p>\n" +
+                "            <h1>Hello World!</h1> \n  not found 404\n" +
+                "        </p>\n" +
+                "    </body>\n" +
+                "</html>";
+        out.write(html.getBytes());
+    }
 
     /**
      * 如果Controller返回的是View，直接Response返回数据

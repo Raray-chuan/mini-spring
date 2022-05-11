@@ -8,6 +8,7 @@ import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.EmptyResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 
 import javax.servlet.ServletException;
@@ -37,10 +38,8 @@ public class TomcatServer {
         tomcat.setPort(ConfigHelper.getInt(ConfigConstant.SERVER_PORT));
         tomcat.getConnector();
 
-
-
         //实例化context容器
-        Context context = new StandardContext();
+        StandardContext context = new StandardContext();
         // ”/“意思是：拦截所有的请求;如果设置像"/xichuan/",则像"/test/a"直接不拦截
         context.setPath("/");
 
@@ -52,7 +51,11 @@ public class TomcatServer {
         Tomcat.addServlet(context,DispatcherServlet.class.getSimpleName(),new DispatcherServlet()).setAsyncSupported(true);
 
         //添加映射;只有是此前缀(eg:"/xichuan/*")的请求才会转发给Servlet，其他请求404
-        context.addServletMappingDecoded(UrlUtil.formatUrl(ConfigHelper.getString(ConfigConstant.SERVER_BASE_PATH)) + UrlUtil.getUrlPatternAll(),DispatcherServlet.class.getSimpleName());
+//        context.addServletMappingDecoded(UrlUtil.formatUrl(ConfigHelper.getString(ConfigConstant.SERVER_BASE_PATH)) + UrlUtil.getUrlPatternAll(),DispatcherServlet.class.getSimpleName());
+        context.addServletMappingDecoded("/*",DispatcherServlet.class.getSimpleName());
+
+        //configureResources(context);
+
 
         //启动
         tomcat.getHost().addChild(context);
@@ -68,5 +71,23 @@ public class TomcatServer {
         //设置为非守护线程
         awaitThread.setDaemon(false);
         awaitThread.start();
+    }
+
+    private static void configureResources(StandardContext context) {
+        String WORK_HOME = System.getProperty("user.dir");
+        File classesDir = new File(WORK_HOME, "target/classes");
+        File jarDir = new File(WORK_HOME, "lib");
+        WebResourceRoot resources = new StandardRoot(context);
+        if (classesDir.exists()) {
+            resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", classesDir.getAbsolutePath(), "/"));
+            System.out.println("Resources added: [classes]");
+        } else if (jarDir.exists()) {
+            resources.addJarResources(new DirResourceSet(resources, "/WEB-INF/lib", jarDir.getAbsolutePath(), "/"));
+            System.out.println("Resources added: [jar]");
+        } else {
+            resources.addPreResources(new EmptyResourceSet(resources));
+            System.out.println("Resources added: [empty]");
+        }
+        context.setResources(resources);
     }
 }

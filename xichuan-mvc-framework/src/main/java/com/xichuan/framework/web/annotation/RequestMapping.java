@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 /**
  * RequestMapping注解
  */
-@Target({ElementType.FIELD,ElementType.METHOD})
+@Target({ElementType.TYPE,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestMapping {
     String value() default "";

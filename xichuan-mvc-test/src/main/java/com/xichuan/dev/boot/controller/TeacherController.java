@@ -13,12 +13,13 @@ import com.xichuan.framework.web.data.RequestMethod;
  * @Description
  */
 @Controller
+@RequestMapping("/teacher/")
 public class TeacherController {
 
     @Autowired
     TeacherBootService teacher;
 
-    @RequestMapping(value = "xichuan/teach",method = RequestMethod.GET)
+    @RequestMapping(value = "/xichuan/teach",method = RequestMethod.GET)
     public String teach() {
         return "名字是";
     }

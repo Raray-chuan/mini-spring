@@ -38,9 +38,7 @@ public class DispatcherServlet extends HttpServlet {
      * @throws ServletException
      */
     @Override
-    public void init(ServletConfig config) {
-
-    }
+    public void init(ServletConfig config) {}
 
     /**
      * 请求处理逻辑
@@ -53,15 +51,17 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestMethod = req.getMethod(); //请求类型，GET/POST...
         String requestPath  = req.getRequestURI();//获取到的路径类似 /aa=xxx
-        Request request=new Request(requestPath,requestMethod);
+        Request request = new Request(UrlUtil.formatUrl(requestPath),requestMethod);
 
         //交给处理器映射器处理
         RequestHandler requestHandler = HandlerMapping.getRequestHandler(request);
-        if(requestHandler ==null)
+        if(requestHandler ==null) {
+            ViewResolver.handle404(resp);
             return;
+        }
 
         //封装RequestParam
-        RequestParam param=new RequestParam();
+        RequestParam param = new RequestParam();
         param.creatParam(req);
 
         //请求处理器适配器适配器适配Param
