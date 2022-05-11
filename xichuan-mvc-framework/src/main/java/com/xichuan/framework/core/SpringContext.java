@@ -3,6 +3,7 @@ package com.xichuan.framework.core;
 
 
 import com.xichuan.framework.core.annotation.ComponentScan;
+import com.xichuan.framework.core.helper.ConfigHelper;
 import com.xichuan.framework.core.helper.LoadBeanHelper;
 
 import java.util.ResourceBundle;
@@ -43,10 +44,8 @@ public class SpringContext {
      */
     public SpringContext() {
         if(Container.singletonObjects.size()==0) {
-            //获取根路径
-            ResourceBundle bundle = ResourceBundle.getBundle("config");
             //获取packagePath下的所有class，注册到classesHashSet
-            LoadBeanHelper.loadAllClass(bundle.getString("componentScan"));
+            LoadBeanHelper.loadAllClass(ConfigHelper.getAppBasePackage());
             //将BeanDefinition、BeforeDelegatedSet、AfterDelegatedSet、BeanPostProcessorList进行注册
             LoadBeanHelper.loadAllBeanDefinition();
             //生产单例bean,将需要代理的bean进行代理，放到一级缓存中

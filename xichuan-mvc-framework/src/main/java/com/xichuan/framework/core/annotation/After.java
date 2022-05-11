@@ -1,4 +1,4 @@
-package com.xichuan.framework.annotation;
+package com.xichuan.framework.core.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,8 @@
 package com.xichuan.framework.web.helper;
 
 import com.alibaba.fastjson.JSON;
+import com.xichuan.framework.ConfigConstant;
+import com.xichuan.framework.core.helper.ConfigHelper;
 import com.xichuan.framework.web.data.View;
 
 import javax.servlet.ServletException;
@@ -44,8 +46,7 @@ public class ViewResolver {
                     for (Map.Entry<String, Object> entry : model.entrySet()) {
                         request.setAttribute(entry.getKey(), entry.getValue());
                     }
-                    ResourceBundle bundle = ResourceBundle.getBundle("config");
-                    String configPath = bundle.getString("webPath");
+                    String configPath = ConfigHelper.getString(ConfigConstant.SERVER_BASE_PATH);
                     if (configPath == null)
                         request.getRequestDispatcher(configPath + path).forward(request, response);
                     else

@@ -1,5 +1,7 @@
 package com.xichuan.framework.web.servier;
 
+import com.xichuan.framework.ConfigConstant;
+import com.xichuan.framework.core.helper.ConfigHelper;
 import com.xichuan.framework.web.DispatcherServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -27,9 +29,9 @@ public class TomcatServer {
     public void startServer(String basePackage) throws LifecycleException {
         //实例化tomcat
         tomcat = new Tomcat();
-        tomcat.setPort(8080);
+        tomcat.setPort(ConfigHelper.getInt(ConfigConstant.SERVER_PORT));
         //需要设置一下端口，不然无法访问
-        tomcat.getConnector().setPort(8080);
+        tomcat.getConnector().setPort(ConfigHelper.getInt(ConfigConstant.SERVER_PORT));
 
         //实例化context容器
         Context context = new StandardContext();

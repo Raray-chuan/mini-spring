@@ -7,8 +7,8 @@ import com.xichuan.framework.web.SpringBootApplication;
  * @Date 2022/5/11 9:48
  * @Description
  */
-public class SpringBootTest {
+public class TestSpringBoot {
     public static void main(String[] args) {
-        SpringBootApplication.run(SpringBootTest.class,args);
+        SpringBootApplication.run(TestSpringBoot.class,args);
     }
 }

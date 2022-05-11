@@ -3,6 +3,7 @@ package com.xichuan.framework.web.helper;
 
 
 
+import com.xichuan.framework.core.helper.ConfigHelper;
 import com.xichuan.framework.core.helper.LoadBeanHelper;
 import com.xichuan.framework.core.helper.Utils;
 
@@ -32,8 +33,7 @@ public class InitMethod {
         }
 
         if (!Utils.isNotBlack(basePackage)){
-            ResourceBundle bundle = ResourceBundle.getBundle("config");
-            basePackage = bundle.getString("componentScan");
+            basePackage = ConfigHelper.getAppBasePackage();
         }
 
         LoadBeanHelper.loadAllClass(basePackage);

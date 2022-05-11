@@ -17,9 +17,9 @@ import java.util.Arrays;
 public class TestAOP {
     public static void main(String[] args) {
         //通过@ComponentScan获取根路径
-        SpringContext app = new SpringContext(ScanConfig.class);
+        //SpringContext app = new SpringContext(ScanConfig.class);
         //通过config.properties获取根路径
-        //SpringApplication app = new SpringApplication();
+        SpringContext app = new SpringContext();
         TeacherAopService teacher = app.getBean(TeacherAopServiceImpl.class);
         teacher.teach("math", Arrays.asList("zhangsan,lisi,wangwu,liuliu".split(",")));
     }
