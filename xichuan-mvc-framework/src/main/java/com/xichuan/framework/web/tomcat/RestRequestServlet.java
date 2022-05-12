@@ -1,4 +1,4 @@
-package com.xichuan.framework.web.helper;
+package com.xichuan.framework.web.tomcat;
 
 
 import com.xichuan.framework.web.data.RequestHandler;
@@ -7,7 +7,10 @@ import com.xichuan.framework.web.data.RequestParam;
 import com.xichuan.framework.web.data.View;
 import com.xichuan.framework.web.helper.HandlerAdapter;
 import com.xichuan.framework.web.helper.HandlerMapping;
+import com.xichuan.framework.web.helper.UrlUtil;
 import com.xichuan.framework.web.helper.ViewResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -24,12 +27,12 @@ import java.io.IOException;
  */
 
 /**
- * 每一个http请求进行拦截一次
+ * 每一个http请求进行拦截一次（此Servlet对Rest的请求进行拦截）
+ * (通过的注解的方式加载Servlet，tomcat会将请求转发此Servlet)
  */
-//@WebServlet(urlPatterns = "/*",loadOnStartup = 0)
-public class DispatcherServlet extends HttpServlet {
-
-    public DispatcherServlet(){}
+@WebServlet(name = "rest_request",urlPatterns = "/",loadOnStartup = 3)
+public class RestRequestServlet extends HttpServlet {
+    private Logger logger = LoggerFactory.getLogger(RestRequestServlet.class);
 
 
     /**
@@ -49,6 +52,8 @@ public class DispatcherServlet extends HttpServlet {
      */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.debug("rest request,request uri:"+ req.getRequestURI());
+
         String requestMethod = req.getMethod(); //请求类型，GET/POST...
         String requestPath  = req.getRequestURI();//获取到的路径类似 /aa=xxx
         Request request = new Request(UrlUtil.formatUrl(requestPath),requestMethod);
@@ -56,7 +61,7 @@ public class DispatcherServlet extends HttpServlet {
         //交给处理器映射器处理
         RequestHandler requestHandler = HandlerMapping.getRequestHandler(request);
         if(requestHandler ==null) {
-            ViewResolver.handle404(resp);
+            ViewResolver.handle404(req,resp);
             return;
         }
 

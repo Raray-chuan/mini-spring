@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,12 +30,12 @@ public class ViewResolver {
      * 处理404
      * @param response
      */
-    public static void handle404( HttpServletResponse response) throws IOException {
-
+    public static void handle404(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
+       request.getRequestDispatcher("/404.html").forward(request, response);
         final ServletOutputStream out = response.getOutputStream();
         response.setContentType("text/html");
         response.setStatus(404);
-        String html =
+        String html404 =
                 "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "    <head>\n" +
@@ -43,11 +44,16 @@ public class ViewResolver {
                 "    </head>\n" +
                 "    <body>\n" +
                 "        <p>\n" +
-                "            <h1>Hello World!</h1> \n  not found 404\n" +
+                "            <h1>Whitelabel Error Page</h1> \n  " +
+                            "This application has no explicit mapping for /error, so you are seeing this as a fallback.</br>\n" +
+                            "</br>\n" +
+                            new Date().toString() + "</br>\n" +
+                            "There was an unexpected error (type=Not Found, status=404).</br>\n" +
+                            "No message available</br>\n" +
                 "        </p>\n" +
                 "    </body>\n" +
                 "</html>";
-        out.write(html.getBytes());
+        out.write(html404.getBytes());
     }
 
     /**

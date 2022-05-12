@@ -3,7 +3,7 @@ package com.xichuan.framework.web;
 
 import com.xichuan.framework.core.SpringContext;
 import com.xichuan.framework.web.helper.HandlerMapping;
-import com.xichuan.framework.web.helper.TomcatServer;
+import com.xichuan.framework.web.tomcat.TomcatServer;
 
 /**
  * @Author Xichuan
