@@ -8,11 +8,13 @@ import java.util.Set;
 
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.ContextConfig;
+
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.descriptor.web.WebXml;
 import org.apache.tomcat.util.scan.Jar;
 import org.apache.tomcat.util.scan.JarFactory;
+
 
 
 /**
@@ -58,17 +60,21 @@ public class EmbededContextConfig extends ContextConfig {
 					try (Jar jar = JarFactory.newInstance(url)) {
 						jar.nextEntry();
 						String entryName = jar.getEntryName();
+						//templates的ResourceRoot是否被添加
+						boolean isTemplatesLoad = false;
+						//static的ResourceRoot是否被添加
+						boolean isStaticLoad = false;
 						while (entryName != null) {
-							if (entryName.startsWith("templates/")) {
+							if (entryName.startsWith("templates/") && !isTemplatesLoad) {
 								context.getResources().createWebResourceSet(
 										//如果请求/index.html，会到jar中的/templates/文件夹下找index.html
 										WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", url, "/templates");
-								break;
+								isTemplatesLoad = true;
 							}
-							if (entryName.startsWith("static/")) {
+							if (entryName.startsWith("static/") && !isStaticLoad) {
 								context.getResources().createWebResourceSet(
 										WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", url, "/static");
-								break;
+								isStaticLoad = true;
 							}
 							jar.nextEntry();
 							entryName = jar.getEntryName();

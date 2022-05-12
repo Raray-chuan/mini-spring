@@ -16,10 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -55,14 +52,9 @@ public class LoadBeanHelper {
      * @return 所有类的class对象
      */
     public static Set<Class<?>> loadAllClass(String packagePath) {
-        URL resource=classLoader.getResource(packagePath.replace(".","/"));
-        ArrayList<File> files=new ArrayList<>();
-        DFSGetCurrentDir(new File(resource.getFile()),files);
+        List<String> classNames = PackageUtil.getClassName(packagePath);
         Class<?>clazz;
-        for (File file:files) {
-            String fileName= file.getAbsolutePath();
-            //+8是为了跳过classes这个字符串
-            String className=fileName.substring(fileName.indexOf("classes")+8,fileName.indexOf(".class")).replace(splitOP,".");
+        for (String className:classNames) {
             try {
                 clazz=classLoader.loadClass(className);
                 classesHashSet.add(clazz);
@@ -108,7 +100,7 @@ public class LoadBeanHelper {
             }
 
             //对@Aspect切面类的处理
-            resolveAspect(clazz);
+            //resolveAspect(clazz);
 
             //将每一个beanDefinition放在map种
             beanDefinitionHashMap.put(newBeanDefine.getBeanName(), newBeanDefine);
@@ -222,7 +214,7 @@ public class LoadBeanHelper {
                     }else {
                         String annotationPathClone=new String(annotationPath);
                         //like this: file:/D:/development/my_test_code/MySpring/xichuan-mvc-test/target/classes/com/xichuan/dev/aop/service
-                        URL resource=Container.classLoader.getResource(annotationPathClone.replace(".","/"));
+                        URL resource = Container.classLoader.getResource(annotationPathClone.replace(".","/"));
                         if(resource==null)
                             resource=Container.classLoader.getResource(annotationPathClone.replace(".","/")+".class");
                         File file=new File(resource.getFile());

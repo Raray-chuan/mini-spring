@@ -15,7 +15,12 @@ import java.util.Arrays;
  * @Description
  */
 public class TestAOP {
-    public static void main(String[] args) {
+
+/*    public static void main(String[] args) {
+        testDemo();
+    }*/
+
+    public static void testDemo(){
         //通过@ComponentScan获取根路径
         //SpringContext app = new SpringContext(ScanConfig.class);
         //通过config.properties获取根路径

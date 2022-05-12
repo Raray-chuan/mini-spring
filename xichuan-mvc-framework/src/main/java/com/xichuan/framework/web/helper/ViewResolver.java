@@ -31,7 +31,8 @@ public class ViewResolver {
      * @param response
      */
     public static void handle404(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
-       request.getRequestDispatcher("/404.html").forward(request, response);
+
+        request.getRequestDispatcher("/404.html").forward(request, response);
         final ServletOutputStream out = response.getOutputStream();
         response.setContentType("text/html");
         response.setStatus(404);

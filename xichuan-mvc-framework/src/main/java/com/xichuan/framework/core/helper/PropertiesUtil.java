@@ -12,7 +12,7 @@ import java.util.Properties;
  * 属性文件工具类
  */
 public final class PropertiesUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
 
     /**
      * 加载属性文件
@@ -28,13 +28,13 @@ public final class PropertiesUtil {
             props = new Properties();
             props.load(is);
         } catch (IOException e) {
-            LOGGER.error("load properties file failure", e);
+            logger.error("load properties file failure", e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    LOGGER.error("close input stream failure", e);
+                    logger.error("close input stream failure", e);
                 }
             }
         }
@@ -55,6 +55,8 @@ public final class PropertiesUtil {
         String value = defaultValue;
         if (props.containsKey(key)) {
             value = props.getProperty(key);
+            logger.debug("load data from properties, key:"+key+", value:"+value);
+
         }
         return value;
     }
@@ -73,6 +75,7 @@ public final class PropertiesUtil {
         int value = defaultValue;
         if (props.containsKey(key)) {
             value = Integer.parseInt(props.getProperty(key));
+            logger.debug("load data from properties, key:"+key+", value:"+value);
         }
         return value;
     }
@@ -91,6 +94,7 @@ public final class PropertiesUtil {
         boolean value = defaultValue;
         if (props.containsKey(key)) {
             value = Boolean.parseBoolean(props.getProperty(key));
+            logger.debug("load data from properties, key:"+key+", value:"+value);
         }
         return value;
     }
