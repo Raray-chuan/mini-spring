@@ -2,6 +2,7 @@ package com.xichuan.framework.web.tomcat;
 
 import com.xichuan.framework.ConfigConstant;
 import com.xichuan.framework.core.helper.ConfigHelper;
+import com.xichuan.framework.core.helper.Utils;
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
@@ -38,7 +39,7 @@ public class TomcatServer {
     public void start() throws LifecycleException, ServletException, IOException {
         String tomcatBaseDir = createTempDir("tomcat", ConfigHelper.getInt(ConfigConstant.SERVER_PORT)).getAbsolutePath();
         String contextDocBase = createTempDir("tomcat-docBase", ConfigHelper.getInt(ConfigConstant.SERVER_PORT)).getAbsolutePath();
-        String hostName = "localhost";
+        String hostName = Utils.getHostName();
         String contextPath = "";
 
         //实例化tomcat
