@@ -21,26 +21,28 @@ public class TeacherController {
     @Autowired
     TeacherBootService teacher;
 
+    //测试ioc、aop
     @RequestMapping(value = "/teach",method = RequestMethod.GET)
     public String teach() {
         teacher.teach("math", Arrays.asList("zhangsan,lisi,wangwu,liuliu".split(",")));
-        return "名字是";
+        return "test ioc、aop";
     }
 
-    @RequestMapping(value = "xichuan",method = RequestMethod.GET)
-    public String teach2() {
-        return "ddddddddddddddd";
+    @RequestMapping(value = "hello/world",method = RequestMethod.GET)
+    public String hello() {
+        return "hello world!";
     }
 
-    @RequestMapping(value = "second",method = RequestMethod.GET)//second?name="xxx"
-    public View secondeHandler(String parm) {
+    @RequestMapping(value = "/view/one",method = RequestMethod.GET)//second?name="xxx"
+    public View testModelAndView1(String parm) {
         View view=new View("/runthrid");
         view.addModel("name","小红");
         return view;
     }
-    @RequestMapping(value = "test",method = RequestMethod.GET)
-    public String third() {
 
-        return "小明和小红";
+    @RequestMapping(value = "test",method = RequestMethod.GET)
+    public String test() {
+
+        return "this is a test message.";
     }
 }
