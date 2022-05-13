@@ -27,6 +27,8 @@ import java.util.*;
 public class LoadBeanHelper {
     //类加载器
     private static ClassLoader classLoader = Container.classLoader;
+    //扫描的包
+    private static String basePackage = "";
     //根路径下的所有类的Class
     private static HashSet<Class<?>> classesHashSet = new HashSet<>();
     //将注册的bean的class封装成BeanDefinition放在此map种
@@ -52,6 +54,7 @@ public class LoadBeanHelper {
      * @return 所有类的class对象
      */
     public static Set<Class<?>> loadAllClass(String packagePath) {
+        basePackage = packagePath;
         List<String> classNames = PackageUtil.getClassName(packagePath);
         Class<?>clazz;
         for (String className:classNames) {
@@ -100,7 +103,7 @@ public class LoadBeanHelper {
             }
 
             //对@Aspect切面类的处理
-            //resolveAspect(clazz);
+            resolveAspect(clazz);
 
             //将每一个beanDefinition放在map种
             beanDefinitionHashMap.put(newBeanDefine.getBeanName(), newBeanDefine);
@@ -147,21 +150,22 @@ public class LoadBeanHelper {
      * @return
      */
     private static String getBeanNameByClass(Class<?> clazz){
-        String BeanName=clazz.getName();
-        BeanName=getBeanName(BeanName);
+        String beanName = clazz.getName();
+        beanName = getBeanName(beanName);
+
         if(clazz.isAnnotationPresent(Component.class)&&!clazz.getAnnotation(Component.class).value().equals("")) {
-            BeanName = clazz.getAnnotation(Component.class).value();
+            beanName = clazz.getAnnotation(Component.class).value();
         }
         if(clazz.isAnnotationPresent(Controller.class)&&!clazz.getAnnotation(Controller.class).value().equals("")) {
-            BeanName = clazz.getAnnotation(Controller.class).value();
+            beanName = clazz.getAnnotation(Controller.class).value();
         }
         if(clazz.isAnnotationPresent(Service.class)&&!clazz.getAnnotation(Service.class).value().equals("")) {
-            BeanName = clazz.getAnnotation(Service.class).value();
+            beanName = clazz.getAnnotation(Service.class).value();
         }
         if(clazz.isAnnotationPresent(Repository.class)&&!clazz.getAnnotation(Repository.class).value().equals("")) {
-            BeanName = clazz.getAnnotation(Repository.class).value();
+            beanName = clazz.getAnnotation(Repository.class).value();
         }
-        return BeanName;
+        return beanName;
     }
 
     /**
@@ -187,7 +191,7 @@ public class LoadBeanHelper {
 
     /**
      * 对@Aspect切面类的处理
-     * @param clazz
+     * @param clazz 切面类class
      */
     private static void resolveAspect(Class<?> clazz){
         //添加切面;(方法上或者类上)
@@ -200,49 +204,122 @@ public class LoadBeanHelper {
                 //like this:@PointCut("com.xichuan.dev.aop.service.StudentAopServiceImpl.study()")
                 if (method.isAnnotationPresent(PointCut.class)) {
                     String delegateString = method.getAnnotation(PointCut.class).value();
-                    annotationPath=delegateString;
-                    //表达式是对对方法切面
+                    annotationPath = delegateString;
+                    //切点是方法
                     if (delegateString.charAt(delegateString.length() - 1) == ')') {
+                        addMethodAspect(clazz,annotationPath);
 
-                        //说明是在某个方法上面的切面
-                        annotationPath =annotationPath.replace("()","");
-                        //切掉方法保留到类
-                        String[] seg=cutName(annotationPath);
-                        addToAspects(clazz,seg[0],true,seg[1]);
-
-                        //切面是某个包或者类
+                     //切点是某个包或者类
                     }else {
-                        String annotationPathClone=new String(annotationPath);
-                        //like this: file:/D:/development/my_test_code/MySpring/xichuan-mvc-test/target/classes/com/xichuan/dev/aop/service
-                        URL resource = Container.classLoader.getResource(annotationPathClone.replace(".","/"));
-                        if(resource==null)
-                            resource=Container.classLoader.getResource(annotationPathClone.replace(".","/")+".class");
-                        File file=new File(resource.getFile());
-
-                        //如果是包名，需要将包下的所有类注册到切面Map中
-                        if(file.isDirectory()) {
-                            ArrayList<File> fileArray=new ArrayList<>();
-                            //获取该路
-                            DFSGetCurrentDir(file,fileArray);
-                            String key;
-                            for(File f:fileArray) {
-                                key = f.getAbsolutePath().replace(splitOP,".");
-                                key = key.substring(key.indexOf(annotationPath),key.indexOf(f.getName())+f.getName().length()-6);
-                                addToAspects(clazz,key,false,"");
-                            }
-
-                            //如果是类，直接将类添加进去
-                        }else {
-                            String key= file.getAbsolutePath().replace(splitOP,".");
-                            key=key.substring(key.indexOf(annotationPath),key.indexOf(file.getName())+file.getName().length()-6);
-                            addToAspects(clazz,key,false,"");
+                        //判断
+                        URL url = Container.classLoader.getResource(basePackage.replace(".","/"));
+                        //切点是class或者package,从file中加载
+                        if (url.getProtocol().equals("file")){
+                            addClassAndPackageAspectFromFile(clazz,annotationPath);
+                        }else if (url.getProtocol().equals("jar")){   //切点是class或者package,从jar中加载
+                            addClassAndPackageAspectFromJar(clazz,annotationPath);
                         }
                     }
-
                 }
-
-
             }
+        }
+    }
+
+    /**
+     * 获取Aspect中被切面的方法；切点是method
+     * @param aspectClass 切面类class
+     * @param annotationPath
+     */
+    private static void addMethodAspect(Class<?> aspectClass,String annotationPath){
+        //说明是在某个方法上面的切面
+        annotationPath =annotationPath.replace("()","");
+        //切掉方法保留到类
+        String[] seg = cutName(annotationPath);
+        //seg(0) like this: com.xichuan.dev.boot.service.StudentBootServiceImpl (被切面的类) ； seg(1) like this:study
+        addToAspects(aspectClass,seg[0],true,seg[1]);
+    }
+
+    /**
+     * 从jar中，获取Aspect中被切面的类；切点是class或者package
+     * @param aspectClass
+     * @param annotationPath
+     */
+    private static void addClassAndPackageAspectFromJar(Class<?> aspectClass,String annotationPath){
+        String annotationPathClone = new String(annotationPath);
+        URL resource = Container.classLoader.getResource(annotationPathClone.replace(".","/"));
+        //resource是null,说明resource是class
+        boolean isClass = false;
+        if(resource==null) {
+            isClass = true;
+        }
+
+        //如果切点是包名，需要将包下的所有类注册到切面Map中
+        if (!isClass){
+            List<String> classNames = PackageUtil.getClassName(annotationPathClone);
+            for (String className : classNames){
+                addToAspects(aspectClass,className,false,"");
+            }
+        }else{  //如果切点是类，直接将类添加进去
+            //获取此类所在的包
+            String classPackagePath =
+                    annotationPathClone.substring(0,annotationPathClone.lastIndexOf(".")).replace(".", "/");
+            //此包下的所有类
+            List<String> classNames = PackageUtil.getClassName(classPackagePath,false);
+            //此className
+            String className = annotationPathClone;
+            //判断此class是否存在
+            boolean classIsExist = false;
+            for (String clsName : classNames){
+                if (className.equals(clsName)){
+                    classIsExist = true;
+                    break;
+                }
+            }
+            if (classIsExist){
+                addToAspects(aspectClass,className,false,"");
+            }
+
+
+        }
+    }
+
+    /**
+     * 从文件夹中(IED)中，获取Aspect中被切面的类；切点是class或者package
+     * @param aspectClass 切面类class
+     * @param annotationPath
+     */
+    private static void addClassAndPackageAspectFromFile(Class<?> aspectClass,String annotationPath){
+        //pointcut annotation的path,(是一个包名或者是一个类名<不带.class>)
+        // class like this: com.xichuan.dev.boot.service.TeacherBootServiceImpl
+        // package like this: com.xichuan.dev.boot.service
+        String annotationPathClone = new String(annotationPath);
+
+        //IDE package like this: file:/D:/development/my_test_code/MySpring/xichuan-mvc-test/target/classes/com/xichuan/dev/boot/service
+        //IDE class like this: file:/D:/development/my_test_code/MySpring/xichuan-mvc-test/target/classes/com/xichuan/dev/boot/service/TeacherBootServiceImpl
+        URL resource = Container.classLoader.getResource(annotationPathClone.replace(".","/"));
+        //resource是null,说明resource是class
+        if(resource==null) {
+            resource = Container.classLoader.getResource(annotationPathClone.replace(".", "/") + ".class");
+        }
+        File file = new File(resource.getFile());
+
+        //如果切点是包名，需要将包下的所有类注册到切面Map中
+        if(file.isDirectory()) {
+            ArrayList<File> fileArray=new ArrayList<>();
+            //获取该路
+            DFSGetCurrentDir(file,fileArray);
+            String key;
+            for(File f:fileArray) {
+                key = f.getAbsolutePath().replace(splitOP,".");
+                key = key.substring(key.indexOf(annotationPath),key.indexOf(f.getName())+f.getName().length()-6);
+                addToAspects(aspectClass,key,false,"");
+            }
+
+            //如果切点是类，直接将类添加进去
+        }else {
+            String key = file.getAbsolutePath().replace(splitOP,".");
+            key = key.substring(key.indexOf(annotationPath),key.indexOf(file.getName())+file.getName().length()-6);
+            addToAspects(aspectClass,key,false,"");
         }
     }
 
@@ -260,14 +337,16 @@ public class LoadBeanHelper {
             methodNode.setMethodName(MethodName);
 
             if(method.isAnnotationPresent(Before.class)) {
-                if(!beforeDelegatedSet.containsKey(key))
-                    beforeDelegatedSet.put(key,new ArrayList<>());
-               beforeDelegatedSet.get(key).add(methodNode);
+                if(!beforeDelegatedSet.containsKey(key)) {
+                    beforeDelegatedSet.put(key, new ArrayList<>());
+                }
+                beforeDelegatedSet.get(key).add(methodNode);
             }
             if(method.isAnnotationPresent(After.class)) {
-                if(!afterDelegatedSet.containsKey(key))
-                    afterDelegatedSet.put(key,new ArrayList<>());
-               afterDelegatedSet.get(key).add(methodNode);
+                if(!afterDelegatedSet.containsKey(key)) {
+                    afterDelegatedSet.put(key, new ArrayList<>());
+                }
+                afterDelegatedSet.get(key).add(methodNode);
             }
         }
 
@@ -511,7 +590,6 @@ public class LoadBeanHelper {
      * @param file
      * @param fileArray
      */
-
     private static void DFSGetCurrentDir(File file, ArrayList<File> fileArray) {
         File[] name=file.listFiles();
         if(name.length==0)

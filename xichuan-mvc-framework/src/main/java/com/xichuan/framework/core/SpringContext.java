@@ -40,7 +40,7 @@ public class SpringContext {
     }
 
     /**
-     * 根据bean的包路径作为根路径
+     * 根据类的包路径作为根路径
      * @param mainClass
      * @param NUll 无意义字段
      */

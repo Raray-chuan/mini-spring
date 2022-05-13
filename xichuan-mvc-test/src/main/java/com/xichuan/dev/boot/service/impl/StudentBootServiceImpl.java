@@ -1,5 +1,6 @@
-package com.xichuan.dev.boot.service;
+package com.xichuan.dev.boot.service.impl;
 
+import com.xichuan.dev.boot.service.StudentBootService;
 import com.xichuan.framework.core.annotation.Service;
 
 /**
@@ -8,7 +9,7 @@ import com.xichuan.framework.core.annotation.Service;
  * @Description
  */
 @Service("bootStudentService")
-public class StudentBootServiceImpl implements StudentBootService{
+public class StudentBootServiceImpl implements StudentBootService {
     @Override
     public void study(String studentName) {
         System.out.println(studentName + " is start study!");

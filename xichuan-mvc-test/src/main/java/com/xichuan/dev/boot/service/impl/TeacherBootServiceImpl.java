@@ -1,5 +1,7 @@
-package com.xichuan.dev.boot.service;
+package com.xichuan.dev.boot.service.impl;
 
+import com.xichuan.dev.boot.service.StudentBootService;
+import com.xichuan.dev.boot.service.TeacherBootService;
 import com.xichuan.framework.core.annotation.Autowired;
 import com.xichuan.framework.core.annotation.Service;
 
@@ -11,7 +13,7 @@ import java.util.List;
  * @Description
  */
 @Service
-public class TeacherBootServiceImpl implements TeacherBootService{
+public class TeacherBootServiceImpl implements TeacherBootService {
     @Autowired("bootStudentService")
     StudentBootService student;
 
