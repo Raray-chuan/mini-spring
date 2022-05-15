@@ -21,7 +21,4 @@ public interface ConfigConstant {
     String JDBC_USERNAME = "xichuan.framework.jdbc.username";
     String JDBC_PASSWORD = "xichuan.framework.jdbc.password";
 
-    //文件地址
-    String JSP_PATH = "xichuan.framework.app.templates.path";
-    String ASSET_PATH = "xichuan.framework.app.static.path";
 }

@@ -1,14 +1,18 @@
 package com.xichuan.framework.web.tomcat;
 
 
+import com.xichuan.framework.core.Container;
+import com.xichuan.framework.core.helper.PackageUtil;
+import com.xichuan.framework.core.helper.Utils;
 import com.xichuan.framework.web.data.RequestHandler;
 import com.xichuan.framework.web.data.Request;
 import com.xichuan.framework.web.data.RequestParam;
 import com.xichuan.framework.web.data.View;
 import com.xichuan.framework.web.helper.HandlerAdapter;
-import com.xichuan.framework.web.helper.HandlerMapping;
+import com.xichuan.framework.web.helper.HandlerMappingHelper;
 import com.xichuan.framework.web.helper.UrlUtil;
-import com.xichuan.framework.web.helper.ViewResolver;
+import com.xichuan.framework.web.helper.argumentHelper.ArgumentResolver;
+import com.xichuan.framework.web.helper.viewHelper.DispatcherViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +22,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @Author Xichuan
@@ -32,54 +42,181 @@ import java.io.IOException;
  */
 @WebServlet(name = "rest_request",urlPatterns = "/",loadOnStartup = 3)
 public class RestRequestServlet extends HttpServlet {
-    private Logger logger = LoggerFactory.getLogger(RestRequestServlet.class);
+    private static Logger logger = LoggerFactory.getLogger(RestRequestServlet.class);
 
+    //参数处理集合
+    private List<ArgumentResolver> argumentResolvers;
 
     /**
      * 初始化方法
+     *
      * @param config
      * @throws ServletException
      */
     @Override
-    public void init(ServletConfig config) {}
+    public void init(ServletConfig config) {
+        try {
+            //初始化ArgumentResolver
+            argumentResolvers = findImplementObject(ArgumentResolver.class);
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * 请求处理逻辑
-     * @param req
-     * @param resp
+     *
+     * @param request
+     * @param response
      * @throws ServletException
      * @throws IOException
      */
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.debug("rest request,request uri:"+ req.getRequestURI());
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.debug("rest request,request uri:" + request.getRequestURI());
 
-        String requestMethod = req.getMethod(); //请求类型，GET/POST...
-        String requestPath  = req.getRequestURI();//获取到的路径类似 /aa=xxx
-        Request request = new Request(UrlUtil.formatUrl(requestPath),requestMethod);
+        String requestMethod = request.getMethod(); //请求类型，GET/POST...
+        String requestPath = request.getRequestURI();//获取到的路径类似 /aa=xxx
 
         //交给处理器映射器处理
-        RequestHandler requestHandler = HandlerMapping.getRequestHandler(request);
-        if(requestHandler ==null) {
-            ViewResolver.handle404(req,resp);
+        RequestHandler requestHandler = HandlerMappingHelper.getRequestHandler(new Request(UrlUtil.formatUrl(requestPath), requestMethod));
+        if (requestHandler == null) {
+            DispatcherViewResolver.handle404(request, response);
             return;
         }
 
         //封装RequestParam
         RequestParam param = new RequestParam();
-        param.creatParam(req);
+        param.creatParam(argumentResolvers,requestHandler,request, response);
 
         //请求处理器适配器适配器适配Param
         Object result = HandlerAdapter.adapterForRequest(param, requestHandler);
 
         //对对返回的View进行处理
-        if(result instanceof View) {
-            ViewResolver.handleViewResult((View) result,req,resp);
-        }else if(result instanceof String) {
-            ViewResolver.handleDataResult((String) result,resp);
+        if (result instanceof View) {
+            DispatcherViewResolver.handleViewResult((View) result, request, response);
+        } else if (result instanceof String) {
+            DispatcherViewResolver.handleDataResult((String) result, response);
+        }
+    }
+
+
+    /**
+     * 获取接口对应目录下的，对应的实现类对象
+     */
+    private static <T> List<T> findImplementObject(Class<?> interfaceClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException, ClassNotFoundException {
+        List<T> result = new ArrayList<>();
+        Set<Class<?>> classSet = loadAllClass(interfaceClass.getPackage().getName());
+        //接口对应的所有实现类
+        List<Class<?>> argumentClass = getClassSetBySuper(classSet, interfaceClass);
+        for (Class<?> clazz : argumentClass) {
+            logger.debug("init argument resolver: " + clazz.getName());
+            result.add((T)clazz.getDeclaredConstructor().newInstance());
+        }
+
+
+        return result;
+    }
+
+    /**
+     * 获取基础包名下某父类的所有子类 或某接口的所有实现类
+     *
+     * @param classesHashSet 说扫描的class
+     * @param superClass     父类class
+     * @return
+     */
+    public static List<Class<?>> getClassSetBySuper(Set<Class<?>> classesHashSet, Class<?> superClass) {
+        List<Class<?>> classList = new ArrayList<>();
+        for (Class<?> cls : classesHashSet) {
+            //isAssignableFrom() 指 superClass 和 cls 是否相同或 superClass 是否是 cls 的父类/接口
+            if (superClass.isAssignableFrom(cls) && !superClass.equals(cls)) {
+                classList.add(cls);
+            }
+        }
+        return classList;
+    }
+
+    /**
+     * 获取某包下的所有类
+     *
+     * @param packagePath
+     * @return
+     */
+    public static Set<Class<?>> loadAllClass(String packagePath) throws IOException, ClassNotFoundException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource(packagePath.replace(".","/"));
+        HashSet<Class<?>> classesHashSet = new HashSet<>();
+        Class<?> clazz;
+        if (url != null){
+            if (url.getProtocol().equals("file")){
+                List<String> classNames = PackageUtil.getClassName(packagePath,false);
+
+                for (String className : classNames) {
+                    try {
+                        clazz = Container.classLoader.loadClass(className);
+                        classesHashSet.add(clazz);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (url.getProtocol().equals("jar")) {
+                /*String[] jarInfo = url.getPath().split("!");
+                String jarFilePath = jarInfo[0].substring(jarInfo[0].indexOf("/"));
+                //System.out.println(jarFilePath);
+                Enumeration<JarEntry> entrys = new JarFile(jarFilePath).entries();
+                JarEntry jarEntry;*/
+
+                /*while (entrys.hasMoreElements()) {
+                    jarEntry = entrys.nextElement();
+                    String entryName = jarEntry.getName();
+                    //System.out.println(entryName);
+                    if (entryName.endsWith(".class")) {
+                        System.out.println("entryName:" + entryName);
+                        int index = entryName.lastIndexOf("/");
+                        String myPackagePath;
+                        if (index != -1) {
+                            myPackagePath = entryName.substring(0, index);
+                        } else {
+                            myPackagePath = entryName;
+                        }
+                        if (myPackagePath.equals(packagePath)) {
+                            entryName = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
+                            clazz = Container.classLoader.loadClass(entryName);
+                            classesHashSet.add(clazz);
+                        }
+                    }
+                }*/
+
+                //todo 从jar包中的jar中加载读取class(此处没有想到好的代码实现方法，等以后研究研究如何加载的时候再实现)，此处先写死
+                List<String> packageClass = new ArrayList<>();
+                packageClass.add("com.xichuan.framework.web.helper.argumentHelper.DefaultArgumentResolver");
+                packageClass.add("com.xichuan.framework.web.helper.argumentHelper.HttpServletRequestArgumentResolver");
+                packageClass.add("com.xichuan.framework.web.helper.argumentHelper.HttpServletResponseArgumentResolver");
+                packageClass.add("com.xichuan.framework.web.helper.argumentHelper.HttpSessionArgumentResolver");
+                packageClass.add("com.xichuan.framework.web.helper.argumentHelper.RequestBodyArgumentResolver");
+                packageClass.add("com.xichuan.framework.web.helper.argumentHelper.RequestParamArgumentResolver");
+                for (String className : packageClass){
+                    clazz = Container.classLoader.loadClass(className);
+                    classesHashSet.add(clazz);
+                }
+            }
         }
 
 
 
+
+        return classesHashSet;
     }
 }
+

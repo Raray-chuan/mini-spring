@@ -1,4 +1,4 @@
-package com.xichuan.framework.web.helper;
+package com.xichuan.framework.web.helper.viewHelper;
 
 import com.alibaba.fastjson.JSON;
 import com.xichuan.framework.ConfigConstant;
@@ -18,7 +18,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -31,8 +30,8 @@ import java.util.jar.JarFile;
 /**
  * View处理类
  */
-public class ViewResolver {
-    private static Logger logger = LoggerFactory.getLogger(ViewResolver.class);
+public class DispatcherViewResolver {
+    private static Logger logger = LoggerFactory.getLogger(DispatcherViewResolver.class);
 
     //用户自定义404页面是否存在
     private static boolean html404IsExists = false;

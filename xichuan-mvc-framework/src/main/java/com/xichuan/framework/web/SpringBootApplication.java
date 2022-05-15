@@ -2,7 +2,7 @@ package com.xichuan.framework.web;
 
 
 import com.xichuan.framework.core.SpringContext;
-import com.xichuan.framework.web.helper.HandlerMapping;
+import com.xichuan.framework.web.helper.HandlerMappingHelper;
 import com.xichuan.framework.web.tomcat.TomcatServer;
 
 /**
@@ -20,7 +20,7 @@ public class SpringBootApplication {
         //加载bean
         SpringContext context = new SpringContext(cls,null);
         //对Controller类的一些处理
-        HandlerMapping.getAllHandler();
+        HandlerMappingHelper.getAllHandler();
 
         try {
             //执行tomcatServer处理类

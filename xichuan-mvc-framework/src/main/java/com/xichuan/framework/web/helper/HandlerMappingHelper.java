@@ -16,7 +16,7 @@ import java.util.HashMap;
  * @Date 2022/5/7 11:25
  * @Description
  */
-public class HandlerMapping {
+public class HandlerMappingHelper {
 
     //Request与RequestHandler的映射
     private static HashMap<Request, RequestHandler> requestHandlerMap =new HashMap<>();
