@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class View {
     //跳转的请求路径
-    private String path=null;
+    private String path= null ;
     //跳转的请求参数
     private Map<String, Object> model;
 

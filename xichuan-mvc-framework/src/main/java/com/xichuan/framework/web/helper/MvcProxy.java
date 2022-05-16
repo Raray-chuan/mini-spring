@@ -2,8 +2,6 @@ package com.xichuan.framework.web.helper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Map;
 
 /**
  * @Author Xichuan

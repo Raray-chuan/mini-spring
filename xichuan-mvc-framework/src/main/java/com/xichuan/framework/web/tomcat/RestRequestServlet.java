@@ -3,16 +3,11 @@ package com.xichuan.framework.web.tomcat;
 
 import com.xichuan.framework.core.Container;
 import com.xichuan.framework.core.helper.PackageUtil;
-import com.xichuan.framework.core.helper.Utils;
-import com.xichuan.framework.web.data.RequestHandler;
 import com.xichuan.framework.web.data.Request;
+import com.xichuan.framework.web.data.RequestHandler;
 import com.xichuan.framework.web.data.RequestParam;
-import com.xichuan.framework.web.data.View;
-import com.xichuan.framework.web.helper.HandlerAdapter;
-import com.xichuan.framework.web.helper.HandlerMappingHelper;
-import com.xichuan.framework.web.helper.UrlUtil;
+import com.xichuan.framework.web.helper.*;
 import com.xichuan.framework.web.helper.argumentHelper.ArgumentResolver;
-import com.xichuan.framework.web.helper.viewHelper.DispatcherViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,13 +17,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @Author Xichuan
@@ -93,7 +88,7 @@ public class RestRequestServlet extends HttpServlet {
         //交给处理器映射器处理
         RequestHandler requestHandler = HandlerMappingHelper.getRequestHandler(new Request(UrlUtil.formatUrl(requestPath), requestMethod));
         if (requestHandler == null) {
-            DispatcherViewResolver.handle404(request, response);
+            ViewResolver.handle404Result(request, response);
             return;
         }
 
@@ -104,12 +99,8 @@ public class RestRequestServlet extends HttpServlet {
         //请求处理器适配器适配器适配Param
         Object result = HandlerAdapter.adapterForRequest(param, requestHandler);
 
-        //对对返回的View进行处理
-        if (result instanceof View) {
-            DispatcherViewResolver.handleViewResult((View) result, request, response);
-        } else if (result instanceof String) {
-            DispatcherViewResolver.handleDataResult((String) result, response);
-        }
+        //对对返回的View或者Data进行处理
+        ViewAdapter.adapter(result,requestHandler,request,response);
     }
 
 

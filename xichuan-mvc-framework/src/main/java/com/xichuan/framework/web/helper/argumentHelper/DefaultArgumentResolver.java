@@ -1,6 +1,7 @@
 package com.xichuan.framework.web.helper.argumentHelper;
 
 import com.alibaba.fastjson.JSON;
+import com.xichuan.framework.core.helper.Utils;
 import com.xichuan.framework.web.annotation.RequestBody;
 import com.xichuan.framework.web.annotation.RequestParam;
 
@@ -11,11 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
  * Created by XiChuan on 2022/5/15.
+ */
+
+/**
+ * 默认的Argument处理类
  */
 public class DefaultArgumentResolver implements ArgumentResolver {
 
@@ -34,6 +38,15 @@ public class DefaultArgumentResolver implements ArgumentResolver {
         return !( ServletRequest.class.isAssignableFrom(type) || ServletResponse.class.isAssignableFrom(type) || isAnnotationMatch);
     }
 
+    /**
+     * 默认Argument处理
+     * @param request
+     * @param response
+     * @param type
+     * @param paramIndex
+     * @param method
+     * @return
+     */
     @Override
     public Object argumentResolver(HttpServletRequest request, HttpServletResponse response, Class<?> type, int paramIndex, Method method) {
         final Parameter[] parameters = method.getParameters();
@@ -49,28 +62,30 @@ public class DefaultArgumentResolver implements ArgumentResolver {
      */
     private Object transDataType(String requestStr,Parameter parameter){
         Object result = null;
-        //进行类型转换
-        if (String.class ==parameter.getType()) {
-            result = requestStr;
-        } else if (Integer.class == parameter.getType() || int.class == parameter.getType()) {
-            result = Integer.valueOf(requestStr);
-        } else if (Double.class == parameter.getType() || double.class == parameter.getType()) {
-            result = Double.valueOf(requestStr);
-        } else if(Long.class == parameter.getType() || long.class == parameter.getType()) {
-            result = Long.valueOf(requestStr);
-        } else if(Short.class == parameter.getType() || short.class == parameter.getType()) {
-            result = Short.valueOf(requestStr);
-        } else if(Boolean.class == parameter.getType() || boolean.class == parameter.getType()) {
-            result = Boolean.valueOf(requestStr);
-        } else if(Float.class == parameter.getType() || float.class == parameter.getType()) {
-            result = Float.valueOf(requestStr);
-        } else if(Byte.class == parameter.getType() || byte.class == parameter.getType()) {
-            result = Byte.valueOf(requestStr);
-        } else if(Map.class == parameter.getType() || HashMap.class == parameter.getType()) {
-            result = JSON.parseObject(requestStr,Map.class);
-        }else if (List.class == parameter.getType() || ArrayList.class == parameter.getType() || LinkedList.class == parameter.getType()){
-            //todo List中的类型不一定是String,目前还没有想到好方法
-            result = JSON.parseArray(requestStr,String.class);
+        if (Utils.isNotBlack(requestStr)){
+            //进行类型转换
+            if (String.class ==parameter.getType()) {
+                result = requestStr;
+            } else if (Integer.class == parameter.getType() || int.class == parameter.getType()) {
+                result = Integer.valueOf(requestStr);
+            } else if (Double.class == parameter.getType() || double.class == parameter.getType()) {
+                result = Double.valueOf(requestStr);
+            } else if(Long.class == parameter.getType() || long.class == parameter.getType()) {
+                result = Long.valueOf(requestStr);
+            } else if(Short.class == parameter.getType() || short.class == parameter.getType()) {
+                result = Short.valueOf(requestStr);
+            } else if(Boolean.class == parameter.getType() || boolean.class == parameter.getType()) {
+                result = Boolean.valueOf(requestStr);
+            } else if(Float.class == parameter.getType() || float.class == parameter.getType()) {
+                result = Float.valueOf(requestStr);
+            } else if(Byte.class == parameter.getType() || byte.class == parameter.getType()) {
+                result = Byte.valueOf(requestStr);
+            } else if(Map.class == parameter.getType() || HashMap.class == parameter.getType()) {
+                result = JSON.parseObject(requestStr,Map.class);
+            }else if (List.class == parameter.getType() || ArrayList.class == parameter.getType() || LinkedList.class == parameter.getType()){
+                //todo List中的类型不一定是String,目前还没有想到好方法
+                result = JSON.parseArray(requestStr,String.class);
+            }
         }
         return result;
     }

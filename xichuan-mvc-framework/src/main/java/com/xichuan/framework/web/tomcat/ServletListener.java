@@ -2,7 +2,6 @@ package com.xichuan.framework.web.tomcat;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 
 /**
  * @Author Xichuan

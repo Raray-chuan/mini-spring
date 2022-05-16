@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 /**
- * 含有@RequestBody注解，映射成一个对象
+ * 含有@RequestBody注解的Argument处理，将String参数映射成一个对象
  */
 public class RequestBodyArgumentResolver implements ArgumentResolver {
     @Override

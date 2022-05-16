@@ -5,11 +5,7 @@ import com.xichuan.framework.web.helper.argumentHelper.ArgumentResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Parameter;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xichuan
@@ -36,10 +32,8 @@ public class RequestParam {
         int i = 0;
         for (Class<?> paramClazz : paramClazzs) {
             for (ArgumentResolver resolver : argumentResolvers) {
-                ArgumentResolver ar = (ArgumentResolver)resolver;
-
-                if (ar.support(paramClazz, paramIndex, requestHandler.getControllerMethod())) {
-                    params[i++] = ar.argumentResolver(request,
+                if (resolver.support(paramClazz, paramIndex, requestHandler.getControllerMethod())) {
+                    params[i++] = resolver.argumentResolver(request,
                             response,
                             paramClazz,
                             paramIndex,

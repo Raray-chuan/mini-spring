@@ -31,6 +31,9 @@ public class HtmlRequestServlet extends DefaultServlet {
     @Override
     public void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.debug("html request,request uri:" + req.getRequestURI());
+        if (req.getRequestURI().endsWith("404.html")) {
+            resp.setStatus(404);
+        }
         super.service(req, resp);
     }
 }
