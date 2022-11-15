@@ -338,7 +338,7 @@ public class SpringContext {
     }
 ```
 
-我们可以看出，如果是单例对象的话，在初始化SpringContext的时候，就会创建bean放到一级缓存中
+我们可以看出，如果是单例对象的话，在初始化SpringContext的时候，就会创建bean并放到一级缓存中
 
 ```java
     /**
@@ -528,9 +528,10 @@ public class SpringContext {
         return null;
     }
 ```
-我们可以看出`populate()`方法是通过遍历该class的所有Field，如果此Filed含有@Autowired注解，会继续调用`getBean()`方法获取实例后的bean,并赋值给该Field。
+我们可以看出`populate()`方法是通过遍历该class的所有Field，如果此Filed含有`@Autowired`注解，会继续调用`getBean()`方法获取实例后的bean,并赋值给该Field。
 
 
 
-上面又是IOC的核心代码了，当SpringContext初始化完成后，会将含有`@Component,@Controller,@Repository,@Service`的bean进行初始化，放到一级缓存中,并bean中含有@Autowired注解的Field都进行注入
+上面又是IOC的核心代码了，当`SpringContext`初始化完成后，会将含有`@Component,@Controller,@Repository,@Service`的bean进行初始化，放到一级缓存中,并bean中含有`@Autowired`注解的Field都进行注入。
+这样我们就可以通过`SpringContext.getBean(String beanName)`方式,通过beanName获取到该bean的实例
 
