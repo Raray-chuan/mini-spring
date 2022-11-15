@@ -25,11 +25,7 @@ import java.util.jar.JarFile;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * View处理类
+ * @Description View处理类
  */
 public class ViewResolver {
     private static Logger logger = LoggerFactory.getLogger(ViewResolver.class);

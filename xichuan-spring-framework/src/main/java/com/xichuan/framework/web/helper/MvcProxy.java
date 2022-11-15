@@ -6,12 +6,9 @@ import java.lang.reflect.Method;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
+ * @Description MVC请求代理类
  */
 
-/**
- * MVC请求代理类
- */
 public class MvcProxy {
     /**
      * 代理调用调用Controller目标方法，并返回

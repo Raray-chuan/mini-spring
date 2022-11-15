@@ -8,12 +8,9 @@ import java.lang.annotation.Target;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:39
- * @Description
+ * @Description Service注解
  */
 
-/**
- * Service注解
- */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Service {

@@ -9,11 +9,7 @@ import java.lang.reflect.Method;
 /**
  * @Author Xichuan
  * @Date 2022/5/13 20:25
- * @Description
- */
-
-/**
- * HttpServletResponse的Argument处理
+ * @Description HttpServletResponse的Argument处理
  */
 public class HttpServletResponseArgumentResolver implements ArgumentResolver {
     

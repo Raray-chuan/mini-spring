@@ -10,11 +10,7 @@ import java.util.List;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * 每一个Http请求的参数，封装成一个类
+ * @Description 每一个Http请求的参数，封装成一个类
  */
 public class RequestParam {
     //将请求的参数封装成为map

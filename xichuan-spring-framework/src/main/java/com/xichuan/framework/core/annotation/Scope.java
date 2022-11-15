@@ -9,11 +9,7 @@ import java.lang.annotation.Target;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * 作用域注解，1、singleton 2、prototype
+ * @Description 作用域注解，1、singleton 2、prototype
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

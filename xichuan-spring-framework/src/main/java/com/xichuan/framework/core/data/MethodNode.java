@@ -5,11 +5,7 @@ import java.lang.reflect.Method;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * 保存切面类与被切面类的一些信息
+ * @Description 保存切面类与被切面类的一些信息
  */
 public class MethodNode {
 

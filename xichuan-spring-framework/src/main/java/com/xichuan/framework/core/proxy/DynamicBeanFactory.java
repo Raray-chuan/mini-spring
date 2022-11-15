@@ -10,11 +10,7 @@ import java.util.ArrayList;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * 动态代理工厂类
+ * @Description 动态代理工厂类
  */
 public class DynamicBeanFactory {
     //Bean定义信息

@@ -10,10 +10,7 @@ import java.net.URL;
 /**
  * @Author Xichuan
  * @Date 2022/5/11 9:18
- * @Description
- */
-/**
- *	find "WEB-INF/web.xml" from app classpath, and mount into WebResourceRoot.
+ * @Description find "WEB-INF/web.xml" from app classpath, and mount into WebResourceRoot.
  */
 public class WebXmlMountListener implements LifecycleListener {
 

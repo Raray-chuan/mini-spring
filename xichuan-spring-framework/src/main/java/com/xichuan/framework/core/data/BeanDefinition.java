@@ -8,11 +8,7 @@ import java.util.ArrayList;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * Bean定义信息
+ * @Description Bean定义信息
  */
 public class BeanDefinition {
 

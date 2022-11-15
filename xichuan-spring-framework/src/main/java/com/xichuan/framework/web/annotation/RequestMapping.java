@@ -11,11 +11,7 @@ import java.lang.annotation.Target;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * RequestMapping注解
+ * @Description RequestMapping注解
  */
 @Target({ElementType.TYPE,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -15,11 +15,7 @@ import java.io.IOException;
 /**
  * @Author Xichuan
  * @Date 2022/5/11 9:18
- * @Description
- */
-
-/**
- * 集成Tomcat服务器，将请求转发至DispatcherServlet
+ * @Description 集成Tomcat服务器，将请求转发至DispatcherServlet
  */
 public class TomcatServer {
 

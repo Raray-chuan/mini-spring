@@ -7,11 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * bean实例容器
+ * @Description bean实例容器
  */
 public class Container {
     //一级，日常实际获取Bean的地方

@@ -8,11 +8,7 @@ import com.xichuan.framework.web.tomcat.TomcatServer;
 /**
  * @Author Xichuan
  * @Date 2022/5/11 9:16
- * @Description
- */
-
-/**
- * SpringBoot入口类
+ * @Description SpringBoot入口类
  */
 public class SpringBootApplication {
     public static void run(Class<?> cls,String[] args){

@@ -1,9 +1,5 @@
 package com.xichuan.framework.web.helper.argumentHelper;
 
-/**
- * Created by XiChuan on 2022/5/13.
- */
-
 import com.alibaba.fastjson.JSON;
 import com.xichuan.framework.web.annotation.RequestBody;
 
@@ -16,7 +12,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 /**
- * 含有@RequestBody注解的Argument处理，将String参数映射成一个对象
+ * @Author Xichuan
+ * @Date 2022/5/13 20:25
+ * @Description 含有@RequestBody注解的Argument处理，将String参数映射成一个对象
  */
 public class RequestBodyArgumentResolver implements ArgumentResolver {
     @Override

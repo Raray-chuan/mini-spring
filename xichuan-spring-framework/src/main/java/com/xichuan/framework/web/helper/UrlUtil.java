@@ -1,15 +1,11 @@
 package com.xichuan.framework.web.helper;
 
-/**
- * @Author Xichuan
- * @Date 2022/5/11 17:50
- * @Description
- */
-
 import com.xichuan.framework.core.helper.Utils;
 
 /**
- * URL处理工具类
+ * @Author Xichuan
+ * @Date 2022/5/11 17:50
+ * @Description URL处理工具类
  */
 public class UrlUtil {
 

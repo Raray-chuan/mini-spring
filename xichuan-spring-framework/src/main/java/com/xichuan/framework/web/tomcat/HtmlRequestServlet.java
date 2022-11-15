@@ -1,9 +1,5 @@
 package com.xichuan.framework.web.tomcat;
 
-
-
-
-
 import org.apache.catalina.servlets.DefaultServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
 /**
  * @Author Xichuan
  * @Date 2022/5/12 12:48
- * @Description
- */
-
-/**
- * 此Servlet对静态资源的请求进行拦截
+ * @Description 此Servlet对静态资源的请求进行拦截
  */
 @WebServlet(name = "html_request",urlPatterns = {"*.html","*.ico","*.js","*.css","*.png","*.gif","*.jpg","*.ttf","*.woff","*.woff2"},loadOnStartup = 1)
 public class HtmlRequestServlet extends DefaultServlet {

@@ -9,7 +9,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * 属性文件工具类
+ * @Author Xichuan
+ * @Date 2022/5/7 11:25
+ * @Description 属性文件工具类
  */
 public final class PropertiesUtil {
     private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);

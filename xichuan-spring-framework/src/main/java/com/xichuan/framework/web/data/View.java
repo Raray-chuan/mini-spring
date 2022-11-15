@@ -6,11 +6,7 @@ import java.util.Map;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * http请求返回的View封装类
+ * @Description http请求返回的View封装类
  */
 public class View {
     //跳转的请求路径

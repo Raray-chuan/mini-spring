@@ -3,7 +3,9 @@ package com.xichuan.framework.web.annotation;
 import java.lang.annotation.*;
 
 /**
- * Created by XiChuan on 2022/5/13.
+ * @Author Xichuan
+ * @Date 2022/5/7 11:25
+ * @Description
  */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

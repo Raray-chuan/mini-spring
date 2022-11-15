@@ -3,11 +3,7 @@ package com.xichuan.framework.web.data;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * Controller中含有@RequestMapping的都封装成一个Request，主要存放uri以及请求类型
+ * @Description Controller中含有@RequestMapping的都封装成一个Request，主要存放uri以及请求类型
  */
 public class Request {
 

@@ -13,11 +13,7 @@ import java.io.IOException;
 /**
  * @Author Xichuan
  * @Date 2022/5/12 16:17
- * @Description
- */
-
-/**
- * 此Servlet对jsp的请求进行拦截
+ * @Description 此Servlet对jsp的请求进行拦截
  */
 @WebServlet(name = "jsp_request",urlPatterns = "*.jps",loadOnStartup = 2)
 public class JspRequestServlet extends JspServlet {

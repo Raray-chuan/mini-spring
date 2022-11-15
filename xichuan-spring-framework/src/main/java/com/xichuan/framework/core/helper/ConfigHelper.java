@@ -1,13 +1,13 @@
 package com.xichuan.framework.core.helper;
 
 
-
 import com.xichuan.framework.ConfigConstant;
-
 import java.util.Properties;
 
 /**
- * 属性文件助手类
+ * @Author Xichuan
+ * @Date 2022/5/7 11:25
+ * @Description 属性文件助手类
  */
 public final class ConfigHelper {
 

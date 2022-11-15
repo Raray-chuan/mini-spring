@@ -1,12 +1,8 @@
 package com.xichuan.framework.core;
 
-
-
 import com.xichuan.framework.core.annotation.ComponentScan;
 import com.xichuan.framework.core.helper.ConfigHelper;
 import com.xichuan.framework.core.helper.LoadBeanHelper;
-
-import java.util.ResourceBundle;
 
 /**
  * @Author Xichuan

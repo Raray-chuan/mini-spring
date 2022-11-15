@@ -8,11 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * Component通用注解
+ * @Description Component通用注解
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

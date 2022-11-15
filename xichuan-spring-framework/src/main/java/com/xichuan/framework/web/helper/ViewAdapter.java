@@ -11,11 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by XiChuan on 2022/5/13.
- */
-
-/**
- * 对View处理的适配
+ * @Author Xichuan
+ * @Date 2022/5/7 11:25
+ * @Description 对View处理的适配
  */
 public class ViewAdapter {
     public static void adapter(Object result, RequestHandler requestHandler, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

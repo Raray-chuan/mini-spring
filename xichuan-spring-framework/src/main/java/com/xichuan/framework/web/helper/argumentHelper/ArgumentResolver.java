@@ -8,17 +8,13 @@ import java.lang.reflect.Method;
 /**
  * @Author Xichuan
  * @Date 2022/5/13 20:25
- * @Description
- */
-
-/**
- * Argument处理接口
+ * @Description Argument处理接口
  */
 public interface ArgumentResolver {
     
-    public boolean support(Class<?> type, int paramIndex, Method method);
+     boolean support(Class<?> type, int paramIndex, Method method);
     
-    public Object argumentResolver(HttpServletRequest request,
+     Object argumentResolver(HttpServletRequest request,
                                    HttpServletResponse response, Class<?> type, int paramIndex,
                                    Method method) throws IOException;
 }

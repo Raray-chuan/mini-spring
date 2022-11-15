@@ -3,11 +3,7 @@ package com.xichuan.framework.core.data;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * Scope的枚举类
+ * @Description Scope的枚举类
  */
 public enum ScopeEnum {
     SingleTon("singleton"),ProtoType("prototype");

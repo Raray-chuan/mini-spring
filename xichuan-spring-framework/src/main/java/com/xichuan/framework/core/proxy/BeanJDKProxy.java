@@ -13,11 +13,7 @@ import java.util.ArrayList;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * Java JDK动态代理工具类
+ * @Description Java JDK动态代理工具类
  */
 public class BeanJDKProxy implements InvocationHandler {
 

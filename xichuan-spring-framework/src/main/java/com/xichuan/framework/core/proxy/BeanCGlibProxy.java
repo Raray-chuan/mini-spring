@@ -1,11 +1,5 @@
 package com.xichuan.framework.core.proxy;
 
-/**
- * @Author Xichuan
- * @Date 2022/5/10 13:33
- * @Description
- */
-
 import com.xichuan.framework.core.data.MethodNode;
 import com.xichuan.framework.core.Container;
 import net.sf.cglib.proxy.Enhancer;
@@ -15,8 +9,11 @@ import net.sf.cglib.proxy.MethodProxy;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+
 /**
- * CGlib 动态代理工具类
+ * @Author Xichuan
+ * @Date 2022/5/10 13:33
+ * @Description CGlib 动态代理工具类
  */
 public class BeanCGlibProxy {
 

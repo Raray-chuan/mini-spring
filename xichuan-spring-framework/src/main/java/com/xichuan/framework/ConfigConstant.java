@@ -1,7 +1,9 @@
 package com.xichuan.framework;
 
 /**
- * 提供相关配置项常量
+ * @Author Xichuan
+ * @Date 2022/5/11 9:16
+ * @Description 提供相关配置项常量
  */
 public interface ConfigConstant {
 

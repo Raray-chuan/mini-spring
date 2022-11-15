@@ -5,12 +5,7 @@ import java.lang.reflect.Method;
 /**
  * @Author Xichuan
  * @Date 2022/5/7 11:25
- * @Description
- */
-
-/**
- * Controller中一个方法封装一个方法
- * 此类作用是通过uri找到对应的RequestHandler
+ * @Description Controller中一个方法封装一个方法; 此类作用是通过uri找到对应的RequestHandler
  */
 public class RequestHandler {
 

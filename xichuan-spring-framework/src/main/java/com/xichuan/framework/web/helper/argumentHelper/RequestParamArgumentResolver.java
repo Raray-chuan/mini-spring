@@ -16,11 +16,7 @@ import java.util.*;
 /**
  * @Author Xichuan
  * @Date 2022/5/13 20:25
- * @Description
- */
-
-/**
- * 含有@RequestParam注解的Argument处理，参数名词可以重命名
+ * @Description 含有@RequestParam注解的Argument处理，参数名词可以重命名
  */
 public class RequestParamArgumentResolver implements ArgumentResolver {
     
