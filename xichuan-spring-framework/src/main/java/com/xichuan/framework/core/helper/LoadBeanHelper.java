@@ -116,7 +116,7 @@ public class LoadBeanHelper {
     public static void productBean() {
         for (String beanName : beanDefinitionHashMap.keySet()) {
             BeanDefinition beanDefinition = beanDefinitionHashMap.get(beanName);
-//                如果是单例变成生产工厂
+            //如果是单例变成生产工厂
             if (beanDefinition.getScope().equals(ScopeEnum.SingleTon.getName())) {
                 //创建单例bean
                 createBean(beanDefinition,true);
@@ -400,7 +400,7 @@ public class LoadBeanHelper {
                 BeanContainer.singletonFactory.remove(beanDefinition.getBeanName());
                 return BeanContainer.earlySingletonObjects.get(beanDefinition.getBeanName());
 
-            //此bean不存在，或者在二级缓存中时的逻辑代码
+            //此bean不存在
             }else {
                 //如果该类是接口，直接返回null
                 if(beanDefinition.getClazz().isInterface())

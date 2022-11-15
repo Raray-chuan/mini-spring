@@ -322,3 +322,215 @@ public class SpringContext {
 
 
 ### 5.4 LoadBeanHelper.productBean()
+```java
+    /**
+     * 生产单例bean,将需要代理的bean进行代理，放到一级缓存中
+     */
+    public static void productBean() {
+        for (String beanName : beanDefinitionHashMap.keySet()) {
+            BeanDefinition beanDefinition = beanDefinitionHashMap.get(beanName);
+            //如果是单例变成生产工厂
+            if (beanDefinition.getScope().equals(ScopeEnum.SingleTon.getName())) {
+                //创建单例bean
+                createBean(beanDefinition,true);
+            }
+        }
+    }
+```
+
+我们可以看出，如果是单例对象的话，在初始化SpringContext的时候，就会创建bean放到一级缓存中
+
+```java
+    /**
+     * 创建bean，并进行代理
+     * @param beanDefinition bean的定义信息
+     * @param singleton 是否是单例bean
+     * @return
+     */
+    private static Object createBean(BeanDefinition beanDefinition, Boolean singleton) {
+        try {
+            //如果在一级或者二级直接返回;如果是在三级缓存，则将三级缓存中的bean移到二级缓存中
+            if(BeanContainer.singletonObjects.containsKey(beanDefinition.getBeanName())&&singleton)
+                return BeanContainer.singletonObjects.get(beanDefinition);
+            else if(BeanContainer.earlySingletonObjects.containsKey(beanDefinition.getBeanName())) {
+                return BeanContainer.earlySingletonObjects.get(beanDefinition.getBeanName());
+            }else if(BeanContainer.singletonFactory.containsKey(beanDefinition.getBeanName())){
+                //将此bean放在二级缓存中，并在三级缓存中删除
+                BeanContainer.earlySingletonObjects.put(beanDefinition.getBeanName(), BeanContainer.singletonFactory.get(beanDefinition.getBeanName()).getTarget());
+                BeanContainer.singletonFactory.remove(beanDefinition.getBeanName());
+                return BeanContainer.earlySingletonObjects.get(beanDefinition.getBeanName());
+
+            //此bean不存在，或者在二级缓存中时的逻辑代码
+            }else {
+                //如果该类是接口，直接返回null
+                if(beanDefinition.getClazz().isInterface())
+                   return null;
+
+                //将bean对象放到动态代理工厂中
+                DynamicBeanFactory dynamicBeanFactory = new DynamicBeanFactory();
+                dynamicBeanFactory.setBeanDefinition(beanDefinition);
+                dynamicBeanFactory.setClazz(beanDefinition.getClazz());
+
+                //查看是否存在切面并放入工厂中，在工厂中准备代理
+                //如果类使用了aop，需要进行动态代理处理
+                if(beforeDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
+                    dynamicBeanFactory.setDelegated(true);
+                    dynamicBeanFactory.setBeforeMethodCache(beforeDelegatedSet.get(beanDefinition.getClazz().getName()));
+                }
+                if(afterDelegatedSet.containsKey(beanDefinition.getClazz().getName())) {
+                    dynamicBeanFactory.setDelegated(true);
+                    dynamicBeanFactory.setAfterMethodCache(afterDelegatedSet.get(beanDefinition.getClazz().getName()));
+                }
+
+                //创建代理对象或者实例对象
+                dynamicBeanFactory.createInstance();
+
+                //扔到三级缓存
+                BeanContainer.singletonFactory.put(beanDefinition.getBeanName(), dynamicBeanFactory);
+
+                //将此bean上的@Autowired注解的类都进行注入(DI注入)
+                Object targetBean = populate(beanDefinition.getBeanName());
+
+                //将对象从三级缓存与二级缓存中清除
+                if(BeanContainer.earlySingletonObjects.containsKey(beanDefinition.getBeanName()))
+                    BeanContainer.earlySingletonObjects.remove(beanDefinition.getBeanName());
+                if(BeanContainer.singletonFactory.containsKey(beanDefinition.getBeanName()))
+                    BeanContainer.singletonFactory.remove(beanDefinition.getBeanName());
+                //将bean对象存放到一级缓存中
+                BeanContainer.singletonObjects.put(beanDefinition.getBeanName(),targetBean);
+
+
+                //加入ControllerMap引用
+                if(beanDefinition.isController()) {
+                    BeanContainer.controllerMap.put(beanDefinition.getBeanName(), BeanContainer.singletonObjects.get(beanDefinition.getBeanName()));
+                }
+
+                //处理BeanNameAware的setBeanName
+                if(targetBean instanceof BeanNameAware) {
+                    ((BeanNameAware)targetBean).setBeanName(beanDefinition.getBeanName());
+                }
+
+                //Spring容器中完成bean实例化、配置以及其他初始化方法前添加一些自己逻辑处理
+                for(BeanPostProcessor processor:beanPostProcessorList) {
+                    BeanContainer.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessBeforeInitialization(targetBean, beanDefinition.getBeanName()));
+                }
+
+                //InitializingBean接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候会执行该方法。
+                if(targetBean instanceof InitializingBean) {
+                   ((InitializingBean) targetBean).afterPropertiesSet();
+                }
+
+                //Spring容器中完成bean实例化、配置以及其他初始化方法后添加一些自己逻辑处理
+                for(BeanPostProcessor processor:beanPostProcessorList) {
+                    BeanContainer.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessAfterInitialization(targetBean, beanDefinition.getBeanName()));
+                }
+            }
+
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Object rs = BeanContainer.singletonObjects.get(beanDefinition.getBeanName());
+        //如果不是单例，要将上面处理的一级缓存中的单例bean清除，并返回bean对象
+        if(!singleton) {
+            //不是单例删除
+            BeanContainer.singletonObjects.remove(beanDefinition.getBeanName());
+            return rs;
+        }
+        return rs;
+    }
+```
+我们看下这个方法的流程(关于aop的处理，此处先不详细介绍):
+- 1.如果在三级缓存中没有这个bean的话，需要先创建`DynamicBeanFactory`动态代理工厂类
+- 2.如果该类的方法中还有@Before与@After注解，需要通过CGlib创建代理对象,如果不含有这两个注解，则直接通过反射创建对象
+- 3.将创建的对象存放到第三级缓存中
+- 4.此bean中含有@Autowired注解的Field都进行注入(DI注入)
+- 5.将对象从三级缓存与二级缓存中清除,并存放到一级缓存中
+- 6.如果此bean含有`@Controller`注解，将此bean放到`ControllerMap`中,在springmvc中会用到
+- 7.对`BeanNameAware`、`InitializingBean`、`BeanPostProcessor`接口的处理
+
+其实这个方法并不复杂，主要关系的是如何通过动态代理创建对象，以及此bean中含有@Autowired注解的Field都进行注入(DI注入)。
+动态代理我们在aop篇章会讲到，现在我们看下`com.xichuan.framework.core.helper.LoadBeanHelper.populate()`方法
+
+```java
+    /**
+     * 获取属性，填充属性；对@Autowired的处理
+     * @param beanName
+     * @return
+     */
+    private static Object populate(String beanName) {
+        try {
+            //获取bean的class
+            Class<?> beanClass = null;
+            if(BeanContainer.singletonFactory.containsKey(beanName))
+                beanClass = BeanContainer.singletonFactory.get(beanName).getClazz();
+            else if(BeanContainer.earlySingletonObjects.containsKey(beanName))
+                beanClass = BeanContainer.earlySingletonObjects.get(beanName).getClass();
+
+
+            //遍历bean的方法
+            for (Field declaredField : beanClass.getDeclaredFields()) {
+                if(!declaredField.isAnnotationPresent(Autowired.class))
+                    continue;
+
+                String methodBenName = null;
+                //如果此类是接口的话，获取此方法的实现类；如果没有实现类，则获取类本身
+                Class<?> implementClass = findImplementClass(declaredField.getType());
+                //如果实现类为null，那么就用本身
+                if (implementClass == null){
+                    implementClass = declaredField.getDeclaringClass();
+                }
+                //通过class获取beanName
+                methodBenName = getBeanNameByClass(implementClass);
+
+                //如果@Autowired的value不为"",那么beanName就是value的值
+                if(!declaredField.getAnnotation(Autowired.class).value().equals(""))
+                    methodBenName=declaredField.getAnnotation(Autowired.class).value();
+
+                //获取此方法上的bean
+                Object methodBean = getBean(methodBenName);
+                declaredField.setAccessible(true);
+
+                //重新设置该方法属性值（即：对接口注入子类对象）
+                //declaredField.set(bean,methodBean);
+                if(BeanContainer.singletonFactory.containsKey(beanName)) {
+
+                    //如果是CGlib设置代理对象属性，如果是jdk Proxy设置原始对象的属性；否则报错
+                    if (BeanContainer.singletonFactory.get(beanName).isCGlib()){
+                        //Field.set(该Field所属的类对象，该对象的新值)
+                        declaredField.set(BeanContainer.singletonFactory.get(beanName).getTarget(), methodBean);
+                    }else{
+                        declaredField.set(BeanContainer.singletonFactory.get(beanName).getInstance(), methodBean);
+                    }
+                } else if(BeanContainer.earlySingletonObjects.containsKey(beanName))
+                    declaredField.set(BeanContainer.earlySingletonObjects.get(beanName),methodBean);
+            }
+
+            //返回此类的bean
+            if(BeanContainer.singletonFactory.containsKey(beanName)) {
+                Object res = BeanContainer.singletonFactory.get(beanName).getTarget();
+                return res;
+            } else if(BeanContainer.earlySingletonObjects.containsKey(beanName)) {
+                Object res = BeanContainer.earlySingletonObjects.get(beanName);
+                return  res;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+```
+我们可以看出`populate()`方法是通过遍历该class的所有Field，如果此Filed含有@Autowired注解，会继续调用`getBean()`方法获取实例后的bean,并赋值给该Field。
+
+
+
+上面又是IOC的核心代码了，当SpringContext初始化完成后，会将含有`@Component,@Controller,@Repository,@Service`的bean进行初始化，放到一级缓存中,并bean中含有@Autowired注解的Field都进行注入
+
