@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.xichuan.dev</groupId>
-    <artifactId>xichuan-mvc-test</artifactId>
+    <artifactId>xichuan-spring-test</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.xichuan.framework</groupId>
-            <artifactId>xichuan-mvc-framework</artifactId>
+            <artifactId>xichuan-spring-framework</artifactId>
             <version>0.0.1</version>
         </dependency>
     </dependencies>
