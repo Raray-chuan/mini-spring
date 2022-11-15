@@ -9,12 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2022/5/7 11:25
  * @Description bean实例容器
  */
-public class Container {
-    //一级，日常实际获取Bean的地方
+public class BeanContainer {
+    //一级缓存，日常实际获取Bean的地方
     public static ConcurrentHashMap<String,Object> singletonObjects = new ConcurrentHashMap<>();
-    //二级，临时
+    //二级缓存，临时
     public static ConcurrentHashMap<String,Object> earlySingletonObjects = new ConcurrentHashMap<>();
-    //三级，Value是一个动态代理对象工厂
+    //三级缓存，value是一个动态代理对象工厂
     public static ConcurrentHashMap<String, DynamicBeanFactory> singletonFactory = new ConcurrentHashMap<>();
     //Controller对象容器
     public static ConcurrentHashMap<String,Object> controllerMap = new ConcurrentHashMap<>();

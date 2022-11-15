@@ -3,7 +3,7 @@ package com.xichuan.framework.web.helper;
 import com.alibaba.fastjson.JSON;
 import com.xichuan.framework.ConfigConstant;
 import com.xichuan.framework.core.helper.ConfigHelper;
-import com.xichuan.framework.core.helper.Utils;
+import com.xichuan.framework.core.helper.CommonUtils;
 import com.xichuan.framework.web.data.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +109,7 @@ public class ViewResolver {
         }
 
 
-        if (Utils.isNotBlack(path)){
+        if (CommonUtils.isNotBlack(path)){
             if (path.startsWith("/")) { //重定向
                 response.setCharacterEncoding("UTF-8");
                 response.sendRedirect( directPath);

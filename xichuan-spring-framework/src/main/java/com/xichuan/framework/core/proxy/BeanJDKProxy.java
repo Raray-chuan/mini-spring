@@ -2,7 +2,7 @@ package com.xichuan.framework.core.proxy;
 
 
 
-import com.xichuan.framework.core.Container;
+import com.xichuan.framework.core.BeanContainer;
 import com.xichuan.framework.core.data.MethodNode;
 
 import java.lang.reflect.InvocationHandler;
@@ -71,7 +71,7 @@ public class BeanJDKProxy implements InvocationHandler {
             for (MethodNode beforeMethod : beforeMethodCache) {
                 if ((!beforeMethod.isFunction())) {
                     String[] name = beforeMethod.getMethod().getDeclaringClass().toString().split("\\.");
-                    beforeMethod.getMethod().invoke(Container.singletonObjects.get(name[name.length - 1]));
+                    beforeMethod.getMethod().invoke(BeanContainer.singletonObjects.get(name[name.length - 1]));
                 }
             }
         }
@@ -81,7 +81,7 @@ public class BeanJDKProxy implements InvocationHandler {
             for (MethodNode beforeMethod : beforeMethodCache) {
                 if (beforeMethod.isFunction() && beforeMethod.getMethodName().equals(methodName)) {
                     String[] name = beforeMethod.getMethod().getDeclaringClass().toString().split("\\.");
-                    beforeMethod.getMethod().invoke(Container.singletonObjects.get(name[name.length - 1]));
+                    beforeMethod.getMethod().invoke(BeanContainer.singletonObjects.get(name[name.length - 1]));
                 }
             }
         }
@@ -98,7 +98,7 @@ public class BeanJDKProxy implements InvocationHandler {
             for (MethodNode afterMethod : afterMethodCache) {
                 if (afterMethod.isFunction() && afterMethod.getMethodName().equals(methodName)) {
                     String[] name = afterMethod.getMethod().getDeclaringClass().toString().split("\\.");
-                    afterMethod.getMethod().invoke(Container.singletonObjects.get(name[name.length - 1]));
+                    afterMethod.getMethod().invoke(BeanContainer.singletonObjects.get(name[name.length - 1]));
                 }
             }
         }
@@ -108,7 +108,7 @@ public class BeanJDKProxy implements InvocationHandler {
             for (MethodNode afterMethod : afterMethodCache) {
                 if ((!afterMethod.isFunction())) {
                     String[] name = afterMethod.getMethod().getDeclaringClass().toString().split("\\.");
-                    afterMethod.getMethod().invoke(Container.singletonObjects.get(name[name.length - 1]));
+                    afterMethod.getMethod().invoke(BeanContainer.singletonObjects.get(name[name.length - 1]));
                 }
             }
         }

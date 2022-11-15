@@ -1,7 +1,7 @@
 package com.xichuan.framework.core.helper;
 
 
-import com.xichuan.framework.core.Container;
+import com.xichuan.framework.core.BeanContainer;
 import com.xichuan.framework.core.annotation.*;
 import com.xichuan.framework.core.data.BeanDefinition;
 import com.xichuan.framework.core.data.MethodNode;
@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class LoadBeanHelper {
     //类加载器
-    private static ClassLoader classLoader = Container.classLoader;
+    private static ClassLoader classLoader = BeanContainer.classLoader;
     //扫描的包
     private static String basePackage = "";
     //根路径下的所有类的Class
@@ -42,7 +42,7 @@ public class LoadBeanHelper {
     private static String splitOP= "\\";
 
     static {
-        if(Utils.getSystem().equals("Linux"))
+        if(CommonUtils.getSystem().equals("Linux"))
             splitOP="/";
     }
 
@@ -132,8 +132,8 @@ public class LoadBeanHelper {
     public static Object getBean(String beanName) {
         //如果是单例，则从一级缓存中获取，如果获取不到，则创建bean并存放到一级缓存中
         if(beanDefinitionHashMap.get(beanName).getScope().equals(ScopeEnum.SingleTon.getName())) {
-            if (Container.singletonObjects.containsKey(beanName)) {
-                return Container.singletonObjects.get(beanName);
+            if (BeanContainer.singletonObjects.containsKey(beanName)) {
+                return BeanContainer.singletonObjects.get(beanName);
             }
             else {
                 return createBean(beanDefinitionHashMap.get(beanName),true);
@@ -212,7 +212,7 @@ public class LoadBeanHelper {
                      //切点是某个包或者类
                     }else {
                         //判断
-                        URL url = Container.classLoader.getResource(basePackage.replace(".","/"));
+                        URL url = BeanContainer.classLoader.getResource(basePackage.replace(".","/"));
                         //切点是class或者package,从file中加载
                         if (url.getProtocol().equals("file")){
                             addClassAndPackageAspectFromFile(clazz,annotationPath);
@@ -246,7 +246,7 @@ public class LoadBeanHelper {
      */
     private static void addClassAndPackageAspectFromJar(Class<?> aspectClass,String annotationPath){
         String annotationPathClone = new String(annotationPath);
-        URL resource = Container.classLoader.getResource(annotationPathClone.replace(".","/"));
+        URL resource = BeanContainer.classLoader.getResource(annotationPathClone.replace(".","/"));
         //resource是null,说明resource是class
         boolean isClass = false;
         if(resource==null) {
@@ -296,10 +296,10 @@ public class LoadBeanHelper {
 
         //IDE package like this: file:/D:/development/my_test_code/MySpring/xichuan-mvc-test/target/classes/com/xichuan/dev/boot/service
         //IDE class like this: file:/D:/development/my_test_code/MySpring/xichuan-mvc-test/target/classes/com/xichuan/dev/boot/service/TeacherBootServiceImpl
-        URL resource = Container.classLoader.getResource(annotationPathClone.replace(".","/"));
+        URL resource = BeanContainer.classLoader.getResource(annotationPathClone.replace(".","/"));
         //resource是null,说明resource是class
         if(resource==null) {
-            resource = Container.classLoader.getResource(annotationPathClone.replace(".", "/") + ".class");
+            resource = BeanContainer.classLoader.getResource(annotationPathClone.replace(".", "/") + ".class");
         }
         File file = new File(resource.getFile());
 
@@ -390,15 +390,15 @@ public class LoadBeanHelper {
     private static Object createBean(BeanDefinition beanDefinition, Boolean singleton) {
         try {
             //如果在一级或者二级直接返回;如果是在三级缓存，则将三级缓存中的bean移到二级缓存中
-            if(Container.singletonObjects.containsKey(beanDefinition.getBeanName())&&singleton)
-                return Container.singletonObjects.get(beanDefinition);
-            else if(Container.earlySingletonObjects.containsKey(beanDefinition.getBeanName())) {
-                return Container.earlySingletonObjects.get(beanDefinition.getBeanName());
-            }else if(Container.singletonFactory.containsKey(beanDefinition.getBeanName())){
+            if(BeanContainer.singletonObjects.containsKey(beanDefinition.getBeanName())&&singleton)
+                return BeanContainer.singletonObjects.get(beanDefinition);
+            else if(BeanContainer.earlySingletonObjects.containsKey(beanDefinition.getBeanName())) {
+                return BeanContainer.earlySingletonObjects.get(beanDefinition.getBeanName());
+            }else if(BeanContainer.singletonFactory.containsKey(beanDefinition.getBeanName())){
                 //将此bean放在二级缓存中，并在三级缓存中删除
-                Container.earlySingletonObjects.put(beanDefinition.getBeanName(),Container.singletonFactory.get(beanDefinition.getBeanName()).getTarget());
-                Container.singletonFactory.remove(beanDefinition.getBeanName());
-                return Container.earlySingletonObjects.get(beanDefinition.getBeanName());
+                BeanContainer.earlySingletonObjects.put(beanDefinition.getBeanName(), BeanContainer.singletonFactory.get(beanDefinition.getBeanName()).getTarget());
+                BeanContainer.singletonFactory.remove(beanDefinition.getBeanName());
+                return BeanContainer.earlySingletonObjects.get(beanDefinition.getBeanName());
 
             //此bean不存在，或者在二级缓存中时的逻辑代码
             }else {
@@ -426,23 +426,23 @@ public class LoadBeanHelper {
                 dynamicBeanFactory.createInstance();
 
                 //扔到三级缓存
-                Container.singletonFactory.put(beanDefinition.getBeanName(), dynamicBeanFactory);
+                BeanContainer.singletonFactory.put(beanDefinition.getBeanName(), dynamicBeanFactory);
 
                 //将此bean上的@Autowired注解的类都进行注入(DI注入)
                 Object targetBean = populate(beanDefinition.getBeanName());
 
                 //将对象从三级缓存与二级缓存中清除
-                if(Container.earlySingletonObjects.containsKey(beanDefinition.getBeanName()))
-                    Container.earlySingletonObjects.remove(beanDefinition.getBeanName());
-                if(Container.singletonFactory.containsKey(beanDefinition.getBeanName()))
-                    Container.singletonFactory.remove(beanDefinition.getBeanName());
+                if(BeanContainer.earlySingletonObjects.containsKey(beanDefinition.getBeanName()))
+                    BeanContainer.earlySingletonObjects.remove(beanDefinition.getBeanName());
+                if(BeanContainer.singletonFactory.containsKey(beanDefinition.getBeanName()))
+                    BeanContainer.singletonFactory.remove(beanDefinition.getBeanName());
                 //将bean对象存放到一级缓存中
-                Container.singletonObjects.put(beanDefinition.getBeanName(),targetBean);
+                BeanContainer.singletonObjects.put(beanDefinition.getBeanName(),targetBean);
 
 
                 //加入ControllerMap引用
                 if(beanDefinition.isController()) {
-                    Container.controllerMap.put(beanDefinition.getBeanName(), Container.singletonObjects.get(beanDefinition.getBeanName()));
+                    BeanContainer.controllerMap.put(beanDefinition.getBeanName(), BeanContainer.singletonObjects.get(beanDefinition.getBeanName()));
                 }
 
                 //处理BeanNameAware的setBeanName
@@ -452,7 +452,7 @@ public class LoadBeanHelper {
 
                 //Spring容器中完成bean实例化、配置以及其他初始化方法前添加一些自己逻辑处理
                 for(BeanPostProcessor processor:beanPostProcessorList) {
-                    Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessBeforeInitialization(targetBean, beanDefinition.getBeanName()));
+                    BeanContainer.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessBeforeInitialization(targetBean, beanDefinition.getBeanName()));
                 }
 
                 //InitializingBean接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候会执行该方法。
@@ -462,7 +462,7 @@ public class LoadBeanHelper {
 
                 //Spring容器中完成bean实例化、配置以及其他初始化方法后添加一些自己逻辑处理
                 for(BeanPostProcessor processor:beanPostProcessorList) {
-                    Container.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessAfterInitialization(targetBean, beanDefinition.getBeanName()));
+                    BeanContainer.singletonObjects.put(beanDefinition.getBeanName(),processor.postProcessAfterInitialization(targetBean, beanDefinition.getBeanName()));
                 }
             }
 
@@ -478,11 +478,11 @@ public class LoadBeanHelper {
             e.printStackTrace();
         }
 
-        Object rs = Container.singletonObjects.get(beanDefinition.getBeanName());
+        Object rs = BeanContainer.singletonObjects.get(beanDefinition.getBeanName());
         //如果不是单例，要将上面处理的一级缓存中的单例bean清除，并返回bean对象
         if(!singleton) {
             //不是单例删除
-            Container.singletonObjects.remove(beanDefinition.getBeanName());
+            BeanContainer.singletonObjects.remove(beanDefinition.getBeanName());
             return rs;
         }
         return rs;
@@ -498,10 +498,10 @@ public class LoadBeanHelper {
         try {
             //获取bean的class
             Class<?> beanClass = null;
-            if(Container.singletonFactory.containsKey(beanName))
-                beanClass = Container.singletonFactory.get(beanName).getClazz();
-            else if(Container.earlySingletonObjects.containsKey(beanName))
-                beanClass = Container.earlySingletonObjects.get(beanName).getClass();
+            if(BeanContainer.singletonFactory.containsKey(beanName))
+                beanClass = BeanContainer.singletonFactory.get(beanName).getClazz();
+            else if(BeanContainer.earlySingletonObjects.containsKey(beanName))
+                beanClass = BeanContainer.earlySingletonObjects.get(beanName).getClass();
 
 
             //遍历bean的方法
@@ -529,25 +529,25 @@ public class LoadBeanHelper {
 
                 //重新设置该方法属性值（即：对接口注入子类对象）
                 //declaredField.set(bean,methodBean);
-                if(Container.singletonFactory.containsKey(beanName)) {
+                if(BeanContainer.singletonFactory.containsKey(beanName)) {
 
                     //如果是CGlib设置代理对象属性，如果是jdk Proxy设置原始对象的属性；否则报错
-                    if (Container.singletonFactory.get(beanName).isCGlib()){
+                    if (BeanContainer.singletonFactory.get(beanName).isCGlib()){
                         //Field.set(该Field所属的类对象，该对象的新值)
-                        declaredField.set(Container.singletonFactory.get(beanName).getTarget(), methodBean);
+                        declaredField.set(BeanContainer.singletonFactory.get(beanName).getTarget(), methodBean);
                     }else{
-                        declaredField.set(Container.singletonFactory.get(beanName).getInstance(), methodBean);
+                        declaredField.set(BeanContainer.singletonFactory.get(beanName).getInstance(), methodBean);
                     }
-                } else if(Container.earlySingletonObjects.containsKey(beanName))
-                    declaredField.set(Container.earlySingletonObjects.get(beanName),methodBean);
+                } else if(BeanContainer.earlySingletonObjects.containsKey(beanName))
+                    declaredField.set(BeanContainer.earlySingletonObjects.get(beanName),methodBean);
             }
 
             //返回此类的bean
-            if(Container.singletonFactory.containsKey(beanName)) {
-                Object res = Container.singletonFactory.get(beanName).getTarget();
+            if(BeanContainer.singletonFactory.containsKey(beanName)) {
+                Object res = BeanContainer.singletonFactory.get(beanName).getTarget();
                 return res;
-            } else if(Container.earlySingletonObjects.containsKey(beanName)) {
-                Object res = Container.earlySingletonObjects.get(beanName);
+            } else if(BeanContainer.earlySingletonObjects.containsKey(beanName)) {
+                Object res = BeanContainer.earlySingletonObjects.get(beanName);
                 return  res;
             }
         } catch (Exception e) {
@@ -563,7 +563,7 @@ public class LoadBeanHelper {
         Class<?> implementClass = interfaceClass;
         //接口对应的所有实现类
         Set<Class<?>> classSetBySuper = getClassSetBySuper(interfaceClass);
-        if (Utils.isNotEmpty(classSetBySuper)) {
+        if (CommonUtils.isNotEmpty(classSetBySuper)) {
             //获取第一个实现类
             implementClass = classSetBySuper.iterator().next();
         }

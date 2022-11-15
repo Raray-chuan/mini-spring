@@ -1,7 +1,7 @@
 package com.xichuan.framework.web.helper.argumentHelper;
 
 import com.alibaba.fastjson.JSON;
-import com.xichuan.framework.core.helper.Utils;
+import com.xichuan.framework.core.helper.CommonUtils;
 import com.xichuan.framework.web.annotation.RequestBody;
 import com.xichuan.framework.web.annotation.RequestParam;
 
@@ -60,7 +60,7 @@ public class DefaultArgumentResolver implements ArgumentResolver {
      */
     private Object transDataType(String requestStr,Parameter parameter){
         Object result = null;
-        if (Utils.isNotBlack(requestStr)){
+        if (CommonUtils.isNotBlack(requestStr)){
             //进行类型转换
             if (String.class ==parameter.getType()) {
                 result = requestStr;

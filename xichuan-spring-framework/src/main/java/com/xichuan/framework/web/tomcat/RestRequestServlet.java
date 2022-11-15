@@ -1,7 +1,7 @@
 package com.xichuan.framework.web.tomcat;
 
 
-import com.xichuan.framework.core.Container;
+import com.xichuan.framework.core.BeanContainer;
 import com.xichuan.framework.core.helper.PackageUtil;
 import com.xichuan.framework.web.data.Request;
 import com.xichuan.framework.web.data.RequestHandler;
@@ -155,7 +155,7 @@ public class RestRequestServlet extends HttpServlet {
 
                 for (String className : classNames) {
                     try {
-                        clazz = Container.classLoader.loadClass(className);
+                        clazz = BeanContainer.classLoader.loadClass(className);
                         classesHashSet.add(clazz);
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
@@ -198,7 +198,7 @@ public class RestRequestServlet extends HttpServlet {
                 packageClass.add("com.xichuan.framework.web.helper.argumentHelper.RequestBodyArgumentResolver");
                 packageClass.add("com.xichuan.framework.web.helper.argumentHelper.RequestParamArgumentResolver");
                 for (String className : packageClass){
-                    clazz = Container.classLoader.loadClass(className);
+                    clazz = BeanContainer.classLoader.loadClass(className);
                     classesHashSet.add(clazz);
                 }
             }

@@ -10,12 +10,14 @@ import java.util.Properties;
  * @Date 2022/5/7 11:25
  * @Description
  */
-public class Utils {
+public class CommonUtils {
 
     //获取系统类型
     public static String getSystem() {
-        Properties props = System.getProperties(); //获得系统属性集
-        String osName = props.getProperty("os.name"); //操作系统名称
+        //获得系统属性集
+        Properties props = System.getProperties();
+        //操作系统名称
+        String osName = props.getProperty("os.name");
         return osName;
     }
 
@@ -28,7 +30,7 @@ public class Utils {
         try {
             return (InetAddress.getLocalHost()).getHostName();
         } catch (UnknownHostException uhe) {
-            String host = uhe.getMessage(); // host = "hostname: hostname"
+            String host = uhe.getMessage();
             if (host != null) {
                 int colon = host.indexOf(':');
                 if (colon > 0) {

@@ -2,7 +2,7 @@ package com.xichuan.framework.web.helper;
 
 
 import com.xichuan.framework.ConfigConstant;
-import com.xichuan.framework.core.Container;
+import com.xichuan.framework.core.BeanContainer;
 import com.xichuan.framework.core.helper.ConfigHelper;
 import com.xichuan.framework.web.annotation.RequestMapping;
 import com.xichuan.framework.web.data.RequestHandler;
@@ -26,8 +26,8 @@ public class HandlerMappingHelper {
      */
     public static void getAllHandler() {
         //获取所有的Controller
-        for(Object controllerName: Container.controllerMap.keySet()) {
-            Object controllerInstance = Container.controllerMap.get(controllerName);
+        for(Object controllerName: BeanContainer.controllerMap.keySet()) {
+            Object controllerInstance = BeanContainer.controllerMap.get(controllerName);
 
             //获取类上的@RequestMapping的value值
             String classUri = null;

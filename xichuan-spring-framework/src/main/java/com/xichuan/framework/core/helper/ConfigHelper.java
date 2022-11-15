@@ -11,13 +11,12 @@ import java.util.Properties;
  */
 public final class ConfigHelper {
 
-    /**
-     * 加载配置文件的属性
-     */
+    //加载配置文件的属性
     private static final Properties CONFIG_PROPS = PropertiesUtil.loadProps(ConfigConstant.CONFIG_FILE);
 
     /**
      * 获取应用基础包名
+     * @return
      */
     public static String getAppBasePackage() {
         return PropertiesUtil.getString(CONFIG_PROPS, ConfigConstant.BASE_PACKAGE);
@@ -25,6 +24,8 @@ public final class ConfigHelper {
 
     /**
      * 根据属性名获取 String 类型的属性值
+     * @param key
+     * @return
      */
     public static String getString(String key) {
         return PropertiesUtil.getString(CONFIG_PROPS, key);
@@ -32,6 +33,8 @@ public final class ConfigHelper {
 
     /**
      * 根据属性名获取 int 类型的属性值
+     * @param key
+     * @return
      */
     public static int getInt(String key) {
         return PropertiesUtil.getInt(CONFIG_PROPS, key);
@@ -39,6 +42,8 @@ public final class ConfigHelper {
 
     /**
      * 根据属性名获取 boolean 类型的属性值
+     * @param key
+     * @return
      */
     public static boolean getBoolean(String key) {
         return PropertiesUtil.getBoolean(CONFIG_PROPS, key);

@@ -1,6 +1,6 @@
 package com.xichuan.framework.web.helper;
 
-import com.xichuan.framework.core.helper.Utils;
+import com.xichuan.framework.core.helper.CommonUtils;
 
 /**
  * @Author Xichuan
@@ -19,7 +19,7 @@ public class UrlUtil {
      */
     public static String formatUrl(String url){
         String formatUrl = "";
-        if (!Utils.isNotBlack(url) || URL_SPLIT.equals(url)){
+        if (!CommonUtils.isNotBlack(url) || URL_SPLIT.equals(url)){
             return url;
         }
 
