@@ -33,9 +33,9 @@ public class LoadBeanHelper {
     private static HashSet<Class<?>> classesHashSet = new HashSet<>();
     //将注册的bean的class封装成BeanDefinition放在此map种
     private static HashMap<String, BeanDefinition> beanDefinitionHashMap = new HashMap<>();
-    //切面类中，后置通知方法Map(key:被切面类名词;value:Method(切面类的方法加了@Before; 如果被切面的是方法，被切面的方法名词))
+    //切面类中，后置通知方法Map(key:被切面(需要被代理)的类;value:Method(参数一:切面类的方法加了@Before;参数二:切面是否事方法；参数三:如果切面是方法，此值是方法名))
     private static HashMap<String, ArrayList<MethodNode>> beforeDelegatedSet = new HashMap<>();
-    //切面类中，前置通知方法Map(key:被切面类名词; value:Method(切面类的方法加了@After; 如果被切面的是方法，被切面的方法名词))
+    //切面类中，前置通知方法Map(key:被切面(需要被代理)的类; value:Method(切面类加了@After的方法;参数二:切面是否事方法；参数三:如果切面是方法，此值是方法名))
     private static HashMap<String, ArrayList<MethodNode>> afterDelegatedSet = new HashMap<>();
     //PostProcessor后置处理器列表
     private static ArrayList<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();

@@ -533,5 +533,5 @@ public class SpringContext {
 
 
 上面又是IOC的核心代码了，当`SpringContext`初始化完成后，会将含有`@Component,@Controller,@Repository,@Service`的bean进行初始化，放到一级缓存中,并bean中含有`@Autowired`注解的Field都进行注入。
-这样我们就可以通过`SpringContext.getBean(String beanName)`方式,通过beanName获取到该bean的实例
+这样我们就可以通过`SpringContext.getBean(String beanName)`方式,通过beanName获取到该bean的实例。
 
