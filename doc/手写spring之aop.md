@@ -143,9 +143,19 @@ public class MethodNode {
 }
 ```
 
-
 ## 5.实现AOP的过程
-### 5.1 LoadBeanHelper.loadAllBeanDefinition()
+
+对ioc的实现已经讲过了，请转下面链接进行阅读
+
+
+- [手写spring之ioc](https://github.com/Raray-chuan/mini-spring/tree/main/doc/手写spring之ioc.md)
+
+
+下面会将到只会对LoadBeanHelper中与aop相关的代码进行说明
+
+
+
+### 5.1 LoadBeanHelper.loadAllBeanDefinition()中处理含有@Aspect注解的类 
 ```java
     public static void loadAllBeanDefinition() {
         for (Class<?> clazz : classesHashSet) {
@@ -393,7 +403,7 @@ public class MethodAspect {
 
 
 
-### 5.2 LoadBeanHelper.productBean
+### 5.2 LoadBeanHelper.productBean：对需要增强的类创建动态代理对象
 此方法会实例化类，们进入此方法看如果对需要增强的类创建动态代理对象
 ```java
     /**

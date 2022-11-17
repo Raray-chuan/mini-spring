@@ -20,8 +20,7 @@
 博文列表:
 - [手写spring之ioc](https://github.com/Raray-chuan/mini-spring/tree/main/doc/手写spring之ioc.md)
 - [手写spring之aop](https://github.com/Raray-chuan/mini-spring/tree/main/doc/手写spring之aop.md)
-- [手写spring之springmvc](https://github.com/Raray-chuan/mini-spring/tree/main/doc/手写spring之springmvc.md)
-- [手写spring之内嵌tomcat](https://github.com/Raray-chuan/mini-spring/tree/main/doc/手写spring之内嵌tomcat.md)
+- [手写spring之简单实现springboot](https://github.com/Raray-chuan/mini-spring/tree/main/doc/手写spring之简单实现springboot.md)
 
 
 

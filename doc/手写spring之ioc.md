@@ -143,8 +143,7 @@ public class BeanDefinition {
 ```
 
 
-### 4.3 BeanContainer
-存放三级缓存的类
+### 4.3 BeanContainer 存放三级缓存的类
 ```java
 /**
  * @Author Xichuan
@@ -234,7 +233,7 @@ public class SpringContext {
 
 
 
-### 5.2 LoadBeanHelper.loadAllClass
+### 5.2 LoadBeanHelper.loadAllClass 加载所有的class
 ```java
     /**
      *获取packagePath下的所有class
@@ -264,7 +263,7 @@ public class SpringContext {
 
 
 
-### 5.3 LoadBeanHelper.loadAllBeanDefinition
+### 5.3 LoadBeanHelper.loadAllBeanDefinition,将class封装成BeanDefinition
 ```java
     /**
      * 将所有的BeanDefinition放入map中，（只有@Component、@Controller、@Service、@Repository才会放入）
@@ -321,7 +320,7 @@ public class SpringContext {
 
 
 
-### 5.4 LoadBeanHelper.productBean()
+### 5.4 LoadBeanHelper.productBean() 将所有BeanDefinition实例化成对象
 ```java
     /**
      * 生产单例bean,将需要代理的bean进行代理，放到一级缓存中

@@ -43,7 +43,7 @@ public class RestRequestServlet extends HttpServlet {
     private List<ArgumentResolver> argumentResolvers;
 
     /**
-     * 初始化方法
+     * 1.初始化方法,加载所有的ArgumentResolver
      *
      * @param config
      * @throws ServletException
@@ -85,21 +85,21 @@ public class RestRequestServlet extends HttpServlet {
         String requestMethod = request.getMethod(); //请求类型，GET/POST...
         String requestPath = request.getRequestURI();//获取到的路径类似 /aa=xxx
 
-        //交给处理器映射器处理
+        //2.找到对应的RequestHandler
         RequestHandler requestHandler = HandlerMappingHelper.getRequestHandler(new Request(UrlUtil.formatUrl(requestPath), requestMethod));
         if (requestHandler == null) {
             ViewResolver.handle404Result(request, response);
             return;
         }
 
-        //封装RequestParam
+        //3.封装RequestParam,将HttpServletRequest中的数据根据不同的argumentResolver转换为Java数据类型
         RequestParam param = new RequestParam();
         param.creatParam(argumentResolvers,requestHandler,request, response);
 
-        //请求处理器适配器适配器适配Param
+        //4.通过反射调用RequestHandler中的Controller方法进行处理逻辑
         Object result = HandlerAdapter.adapterForRequest(param, requestHandler);
 
-        //对对返回的View或者Data进行处理
+        //5.根据上一步返回的数据，将数据进行View或者Data进行处理
         ViewAdapter.adapter(result,requestHandler,request,response);
     }
 
